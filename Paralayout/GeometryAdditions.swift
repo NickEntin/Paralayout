@@ -56,41 +56,41 @@ public func -(lhs: CGPoint, rhs: CGPoint) -> UIOffset {
 
 /// The ratio of pixels to points, either of a UIScreen, a UIView's screen, or an explicit value.
 public protocol ScaleFactorProviding {
-    
+
     var pixelsPerPoint: CGFloat { get }
-    
+
 }
 
 extension UIScreen: ScaleFactorProviding {
-    
+
     public var pixelsPerPoint: CGFloat {
         return scale
     }
-    
+
 }
 
 extension UIView: ScaleFactorProviding {
-    
+
     public var pixelsPerPoint: CGFloat {
         return (window?.screen ?? UIScreen.main).pixelsPerPoint
     }
-    
+
 }
 
 extension CGFloat: ScaleFactorProviding {
-    
+
     public var pixelsPerPoint: CGFloat {
         return self
     }
-    
+
 }
 
 extension Int: ScaleFactorProviding {
-    
+
     public var pixelsPerPoint: CGFloat {
         return CGFloat(self)
     }
-    
+
 }
 
 
@@ -98,26 +98,26 @@ extension Int: ScaleFactorProviding {
 
 
 extension CGFloat {
-    
+
     private func adjustToPixel(_ scaleFactor: ScaleFactorProviding, _ adjustment: (CGFloat) -> CGFloat) -> CGFloat {
         let scale = scaleFactor.pixelsPerPoint
         return (scale > 0.0) ? (adjustment(self * scale) / scale) : self
     }
-    
+
     /// Floor a coordinate value (in points) to the nearest pixel, e.g. 0.6 @2x -> 0.5, not 0.0).
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
     /// - returns: The adjusted coordinate.
     public func floorToPixel(in scaleFactor: ScaleFactorProviding) -> CGFloat {
         return adjustToPixel(scaleFactor) { floor($0) }
     }
-    
+
     /// Ceiling a coordinate value (in points) to the nearest pixel, e.g. 0.4 @2x -> 0.5, not 1.0).
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
     /// - returns: The adjusted coordinate.
     public func ceilToPixel(in scaleFactor: ScaleFactorProviding) -> CGFloat {
         return adjustToPixel(scaleFactor) { ceil($0) }
     }
-    
+
     /// Round a coordinate value (in points) to the nearest pixel, e.g. 0.4 @2x -> 0.5, not 0.0).
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
     /// - returns: The adjusted coordinate.
@@ -125,59 +125,59 @@ extension CGFloat {
         // Invoke the namespaced Darwin.round() function since round() is ambiguous (it's also a mutating instance method).
         return adjustToPixel(scaleFactor) { Darwin.round($0) }
     }
-    
+
 }
 
 
 extension CGPoint {
-    
+
     /// Floor a coordinate (in points) to the nearest pixel, e.g. (0.6, 1.1) @2x -> (0.5, 1.0), not (0.0, 1.0)).
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
     /// - returns: The adjusted coordinate.
     public func floorToPixel(in scaleFactor: ScaleFactorProviding) -> CGPoint {
         return CGPoint(x: x.floorToPixel(in: scaleFactor), y: y.floorToPixel(in: scaleFactor))
     }
-    
+
     /// Ceiling a coordinate (in points) to the nearest pixel, e.g. (0.4, 1.1) @2x -> (0.5, 1.5), not (1.0, 2.0)).
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
     /// - returns: The adjusted coordinate.
     public func ceilToPixel(in scaleFactor: ScaleFactorProviding) -> CGPoint {
         return CGPoint(x: x.ceilToPixel(in: scaleFactor), y: y.ceilToPixel(in: scaleFactor))
     }
-    
+
     /// Round a coordinate (in points) to the nearest pixel, e.g. (0.4, 0.5) @2x -> (0.5, 0.5), not (0.0, 1.0)).
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
     /// - returns: The adjusted coordinate.
     public func roundToPixel(in scaleFactor: ScaleFactorProviding) -> CGPoint {
         return CGPoint(x: x.roundToPixel(in: scaleFactor), y: y.roundToPixel(in: scaleFactor))
     }
-    
+
 }
 
 
 extension CGSize {
-    
+
     /// Floor a size (in points) to the nearest pixel, e.g. (0.6, 1.1) @2x -> (0.5, 1.0), not (0.0, 1.0)).
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
     /// - returns: The adjusted coordinate.
     public func floorToPixel(in scaleFactor: ScaleFactorProviding) -> CGSize {
         return CGSize(width: width.floorToPixel(in: scaleFactor), height: height.floorToPixel(in: scaleFactor))
     }
-    
+
     /// Ceiling a size (in points) to the nearest pixel, e.g. (0.4, 1.1) @2x -> (0.5, 1.5), not (1.0, 2.0)).
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
     /// - returns: The adjusted coordinate.
     public func ceilToPixel(in scaleFactor: ScaleFactorProviding) -> CGSize {
         return CGSize(width: width.ceilToPixel(in: scaleFactor), height: height.ceilToPixel(in: scaleFactor))
     }
-    
+
     /// Round a size (in points) to the nearest pixel, e.g. (0.4, 0.5) @2x -> (0.5, 0.5), not (0.0, 1.0)).
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
     /// - returns: The adjusted coordinate.
     public func roundToPixel(in scaleFactor: ScaleFactorProviding) -> CGSize {
         return CGSize(width: width.roundToPixel(in: scaleFactor), height: height.roundToPixel(in: scaleFactor))
     }
-    
+
 }
 
 
@@ -185,7 +185,7 @@ extension CGSize {
 
 
 extension CGRect {
-    
+
     /// Initialize a CGRect with bounding coordinates (always with non-negative size).
     /// - parameter left: The first vertical edge of the rect.
     /// - parameter top: The first horizontal edge of the rect.
@@ -194,7 +194,7 @@ extension CGRect {
     public init(left: CGFloat, top: CGFloat, right: CGFloat, bottom: CGFloat) {
         self.init(x: min(left, right), y: min(top, bottom), width: abs(right - left), height: abs(bottom - top))
     }
-    
+
     /// Insets the rect's edges.
     /// - parameter left: The inset to apply to the left edge (optional, defaults to 0).
     /// - parameter top: The inset to apply to the top edge (optional, defaults to 0).
@@ -204,7 +204,7 @@ extension CGRect {
     public func inset(left: CGFloat = 0.0, top: CGFloat = 0.0, right: CGFloat = 0.0, bottom: CGFloat = 0.0) -> CGRect {
         return inset(by: UIEdgeInsets(top: top, left: left, bottom: bottom, right: right))
     }
-    
+
     /// Outsets the rect, if necessary, to snap to the nearest pixel at the specified scale.
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
     /// - returns: A new rect with pixel-aligned boundaries, enclosing the original rect.
@@ -214,7 +214,7 @@ extension CGRect {
                       right: maxX.ceilToPixel(in: scaleFactor),
                       bottom: maxY.ceilToPixel(in: scaleFactor))
     }
-    
+
     /// Insets the rect, if necessary, to snap to the nearest pixel at the specified scale.
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
     /// - returns: A new rect with pixel-aligned boundaries, enclosed by the original rect.
@@ -224,7 +224,7 @@ extension CGRect {
                       right: maxX.floorToPixel(in: scaleFactor),
                       bottom: maxY.floorToPixel(in: scaleFactor))
     }
-    
+
     /// Divides the receiver in two.
     /// - parameter from: The edge from which the amount is interpreted.
     /// - parameter amount: The size of the slice (absolute).
@@ -236,19 +236,19 @@ extension CGRect {
             assert(amount <= width, "Cannot slice rect \(self) at edge \(edge) by \(amount)!")
             return (CGRect(x: minX, y: minY, width: amount, height: height),
                     CGRect(x: minX + amount, y: minY, width: width - amount, height: height))
-            
+
         case .minYEdge:
             // Top.
             assert(amount <= height, "Cannot slice rect \(self) at edge \(edge) by \(amount)!")
             return(CGRect(x: minX, y: minY, width: width, height: amount),
                    CGRect(x: minX, y: minY + amount, width: width, height: height - amount))
-            
+
         case .maxXEdge:
             // Right.
             assert(amount <= width, "Cannot slice rect \(self) at edge \(edge) by \(amount)!")
             return(CGRect(x: maxX - amount, y: minY, width: amount, height: height),
                    CGRect(x: minX, y: minY, width: width - amount, height: height))
-            
+
         case .maxYEdge:
             // Bottom.
             assert(amount <= height, "Cannot slice rect \(self) at edge \(edge) by \(amount)!")
@@ -264,12 +264,12 @@ extension CGRect {
 
 
 extension UIEdgeInsets {
-    
+
     /// The combined top and bottom insets.
     public var verticalAmount: CGFloat {
         return top + bottom
     }
-    
+
     /// The combined left and right insets.
     public var horizontalAmount: CGFloat {
         return left + right

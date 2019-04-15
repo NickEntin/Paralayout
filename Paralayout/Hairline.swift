@@ -19,9 +19,9 @@ import UIKit
 
 /// A view that provides sizing and positioning conveniences for 1-pixel hairlines.
 public class Hairline: UIView {
-    
+
     // MARK: - Class Methods
-    
+
     /// Create an install a new Hairline instance into another view.
     /// - parameter superview: The view into which the new instance will be installed.
     /// - parameter edge: Where to position the instance (which also implies horizontal/vertical orientation).
@@ -29,24 +29,24 @@ public class Hairline: UIView {
     /// - parameter autoresize: Whether or not to configure the appropriate `autoresizingMask` for the specified edge (optional, defaults to `false`).
     public class func new(in superview: UIView, at edge: CGRectEdge, inset: CGFloat = 0, autoresize: Bool = false) -> Hairline {
         let hairline = Hairline()
-        
+
         superview.addSubview(hairline)
         hairline.spanSuperview(at: edge, inset: inset, updateAutoresizingMask: autoresize)
-        
+
         return hairline
     }
-    
+
     // MARK: - Properties
-    
+
     /// Whether the hairline is horizontal or vertical.
     public var isHorizontal: Bool = true
-    
+
     /// The hairline's length in the direction of its orientation, e.g. `frame.width` for a horizontal hairline.
     public var length: CGFloat {
         get {
             return isHorizontal ? frame.width : frame.height
         }
-        
+
         set {
             if isHorizontal {
                 frame.size.width = newValue
@@ -55,9 +55,9 @@ public class Hairline: UIView {
             }
         }
     }
-    
+
     // MARK: - UIView
-    
+
     /// Return a size with the appropriate dimension set to the hairline width.
     public override func sizeThatFits(_ size: CGSize) -> CGSize {
         if isHorizontal {
@@ -66,9 +66,9 @@ public class Hairline: UIView {
             return CGSize(width: hairlineWidth, height: size.height)
         }
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// Size and position the Hairline within its `superview`, along an edge. Hairlines not positioned at their superview's edge can be resized via `length` or `sizeToFit()`.
     /// - parameter edge: The edge at which to position the hairline (this can change `isHorizontal`).
     /// - parameter leadingInset: The inset from the superview at the left/top of the hairline (optional, defaults to `0`).
@@ -78,60 +78,60 @@ public class Hairline: UIView {
         guard let superview = superview else {
             return
         }
-        
+
         let superviewBounds = superview.bounds
-        
+
         switch edge {
         case .minXEdge:
             isHorizontal = false
-            
+
             frame = CGRect(x: superviewBounds.minX,
                            y: superviewBounds.minY + leadingInset,
                            width: hairlineWidth,
                            height: superviewBounds.height - (leadingInset + trailingInset))
-            
+
             if updateAutoresizingMask {
                 autoresizingMask = [ .flexibleHeight, .flexibleRightMargin ]
             }
 
         case .maxXEdge:
             isHorizontal = false
-            
+
             frame = CGRect(x: superviewBounds.maxX - hairlineWidth,
                            y: superviewBounds.minY + leadingInset,
                            width: hairlineWidth,
                            height: superviewBounds.height - (leadingInset + trailingInset))
-            
+
             if updateAutoresizingMask {
                 autoresizingMask = [ .flexibleHeight, .flexibleLeftMargin ]
             }
-            
+
         case .minYEdge:
             isHorizontal = true
-            
+
             frame = CGRect(x: superviewBounds.minX + leadingInset,
                            y: superviewBounds.minY,
                            width: superviewBounds.width - (leadingInset + trailingInset),
                            height: hairlineWidth)
-            
+
             if updateAutoresizingMask {
                 autoresizingMask = [ .flexibleWidth, .flexibleBottomMargin ]
             }
-            
+
         case .maxYEdge:
             isHorizontal = true
-            
+
             frame = CGRect(x: superviewBounds.minX + leadingInset,
                            y: superviewBounds.maxY - hairlineWidth,
                            width: superviewBounds.width - (leadingInset + trailingInset),
                            height: hairlineWidth)
-            
+
             if updateAutoresizingMask {
                 autoresizingMask = [ .flexibleWidth, .flexibleTopMargin ]
             }
         }
     }
-    
+
     /// Size and position the Hairline within its `superview`, along an edge. Hairlines not positioned at their superview's edge can be resized via `length` or `sizeToFit()`.
     /// - parameter edge: The edge at which to position the hairline (this can change `isHorizontal`).
     /// - parameter inset: The inset from the superview at the start and end of the hairline.
@@ -139,7 +139,7 @@ public class Hairline: UIView {
     public func spanSuperview(at edge: CGRectEdge, inset: CGFloat, updateAutoresizingMask: Bool = false) {
         spanSuperview(at: edge, leadingInset: inset, trailingInset: inset, updateAutoresizingMask: updateAutoresizingMask)
     }
-    
+
 }
 
 
@@ -147,7 +147,7 @@ public class Hairline: UIView {
 
 
 extension UIScreen {
-    
+
     /// Returns the width of a hairline (in points) for a given scale factor.
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` for the theoretical "real" size).
     /// - returns: The width, in points, of a hairline.
@@ -156,27 +156,27 @@ extension UIScreen {
         let hairline = CGFloat(0.5).floorToPixel(in: scaleFactor)
         return (hairline > 0.0) ? hairline : CGFloat(0.5).ceilToPixel(in: scaleFactor)
     }
-    
+
     /// The width of a hairline (in points) for the receiver's scale factor.
     public var hairlineWidth: CGFloat {
         return UIScreen.hairlineWidth(for: self)
     }
-    
+
 }
 
 extension UIView {
-    
+
     private static let defaultHairlineWidth = UIScreen.main.hairlineWidth
-    
+
     /// The width of a hairline (in points) for the receiver's screen's scale factor (or `UIScreen.main` if not onscreen).
     public var hairlineWidth: CGFloat {
         if let selfAsWindow = self as? UIWindow {
             // A window's `window` is nil.
             return selfAsWindow.screen.hairlineWidth
-            
+
         } else {
             return window?.screen.hairlineWidth ?? UIView.defaultHairlineWidth
         }
     }
-    
+
 }

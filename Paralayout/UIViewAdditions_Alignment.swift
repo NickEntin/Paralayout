@@ -19,11 +19,11 @@ import UIKit
 
 /// Locations within a rectangle.
 public enum Position {
-    
+
     case topLeft, topCenter, topRight
     case leftCenter, center, rightCenter
     case bottomLeft, bottomCenter, bottomRight
-    
+
     /// The "opposite" position.
     /// - parameter horizontally: Whether to reflect left and right positions (optional, defaults to `true`).
     /// - parameter vertically: Whether to reflect top and bottom positions (optional, defaults to `true`).
@@ -36,36 +36,36 @@ public enum Position {
             } else {
                 return vertically ? .bottomLeft : .topLeft
             }
-            
+
         case .topCenter:
             return vertically ? .bottomCenter : .topCenter
-            
+
         case .topRight:
             if horizontally {
                 return vertically ? .bottomLeft : .topLeft
             } else {
                 return vertically ? .bottomRight : .topRight
             }
-            
+
         case .leftCenter:
             return horizontally ? .rightCenter : .leftCenter
-            
+
         case .center:
             return .center
-            
+
         case .rightCenter:
             return horizontally ? .leftCenter : .rightCenter
-            
+
         case .bottomLeft:
             if horizontally {
                 return vertically ? .topRight : .bottomRight
             } else {
                 return vertically ? .topLeft : .bottomLeft
             }
-            
+
         case .bottomCenter:
             return vertically ? .topCenter : .bottomCenter
-            
+
         case .bottomRight:
             if horizontally {
                 return vertically ? .topLeft : .bottomLeft
@@ -74,7 +74,7 @@ public enum Position {
             }
         }
     }
-    
+
     /// The position in a specific rectangle.
     /// - parameter rect: The rect for which to interpret the position.
     /// - returns: The point within the rect at the specified position.
@@ -86,14 +86,14 @@ public enum Position {
             return CGPoint(x: rect.midX, y: rect.minY)
         case .topRight:
             return CGPoint(x: rect.maxX, y: rect.minY)
-            
+
         case .leftCenter:
             return CGPoint(x: rect.minX, y: rect.midY)
         case .center:
             return CGPoint(x: rect.midX, y: rect.midY)
         case .rightCenter:
             return CGPoint(x: rect.maxX, y: rect.midY)
-            
+
         case .bottomLeft:
             return CGPoint(x: rect.minX, y: rect.maxY)
         case .bottomCenter:
@@ -102,7 +102,7 @@ public enum Position {
             return CGPoint(x: rect.maxX, y: rect.maxY)
         }
     }
-    
+
 }
 
 
@@ -110,16 +110,16 @@ public enum Position {
 
 
 extension UIView {
-    
+
     // MARK: - View Alignment - Core
-    
+
     /// The location of a position in the view's `bounds` (regardless of whether or not it conforms to `CustomPositionBounds`).
     /// - parameter position: The position to use.
     /// - returns: The point at the specified position.
     public func point(inBoundsAt position: Position) -> CGPoint {
         return position.point(in: bounds)
     }
-    
+
     /// The location of a position in the view, either in `bounds`, or `customPositionBounds` if it conforms to `CustomPositionBounds`.
     /// - parameter position: The position to use.
     /// - returns: The point at the specified position.
@@ -130,7 +130,7 @@ extension UIView {
             return point(inBoundsAt: position)
         }
     }
-    
+
     /// The offset between two views' positions.
     /// - parameter position: The position in the receiving view's `bounds`.
     /// - parameter otherView: The other view for the measurement.
@@ -141,14 +141,14 @@ extension UIView {
         guard let superview = superview else {
             return .zero
         }
-        
+
         // Convert both points to the receiver's superview, since we are working with the frame (not the bounds).
         let srcPoint = superview.convert(point(at: position), from: self)
         let dstPoint = superview.convert(otherView.point(at: otherPosition), from: otherView)
-        
+
         return dstPoint - srcPoint
     }
-    
+
     /// Move the view to align it with another view.
     /// - parameter position: The position within the receiving view to use for alignment.
     /// - parameter otherView: The view to which the receiving view will be aligned.
@@ -156,29 +156,29 @@ extension UIView {
     /// - parameter offset: An additional offset to apply to the alignment, e.g. to leave a space between the two views.
     public func align(_ position: Position, with otherView: UIView, _ otherPosition: Position, offset: UIOffset) {
         let totalOffset = frameOffset(from: position, to: otherView, otherPosition) + offset
-        
+
         // Apply the offset and round to the nearest pixel.
         frame.origin = (frame.origin + totalOffset).roundToPixel(in: self)
     }
-    
+
     // MARK: - View Alignment - Convenience
-    
+
     /// The insets of the view's positions relative to its superview's.
     public var positionInsetsFromSuperview: UIEdgeInsets {
         // We can't have margins if we don't have a superview.
         guard let superview = superview else {
             return .zero
         }
-        
+
         let leadingOffset = frameOffset(from: .topLeft, to: superview, .topLeft)
         let trailingOffset = frameOffset(from: .bottomRight, to: superview, .bottomRight)
-        
+
         return UIEdgeInsets(top: -leadingOffset.vertical,
                             left: -leadingOffset.horizontal,
                             bottom: trailingOffset.vertical,
                             right: trailingOffset.horizontal)
     }
-    
+
     /// Move the view to align it with another view.
     /// - parameter position: The position within the receiving view to use for alignment.
     /// - parameter otherView: The view to which the receiving view will be aligned.
@@ -188,7 +188,7 @@ extension UIView {
     public func align(_ position: Position, with otherView: UIView, _ otherPosition: Position, horizontalOffset: CGFloat = 0, verticalOffset: CGFloat = 0) {
         align(position, with: otherView, otherPosition, offset: UIOffset(horizontal: horizontalOffset, vertical: verticalOffset))
     }
-    
+
     /// Move the view to align it within its superview, based on position.
     /// - parameter position: The position within the receiving view to use for alignment.
     /// - parameter superviewPosition: The position within the view's `superview` to use for alignment.
@@ -199,10 +199,10 @@ extension UIView {
             assertionFailure("Can't align view without a superview!")
             return
         }
-        
+
         align(position, with: superview, superviewPosition, offset: UIOffset(horizontal: horizontalOffset, vertical: verticalOffset))
     }
-    
+
     /// Move the view to align it within its superview, based on coordinate.
     /// - parameter position: The position within the receiving view to use for alignment.
     /// - parameter superviewPoint: The coordinate within the view's `superview` to use for alignment.
@@ -213,10 +213,10 @@ extension UIView {
             assertionFailure("Can't align view without a superview!")
             return
         }
-        
+
         align(position, with: superview, .topLeft, offset: UIOffset(horizontal: superviewPoint.x + horizontalOffset, vertical: superviewPoint.x + verticalOffset))
     }
-    
+
     /// Move the view to align it with another view.
     /// - parameter position: The position in both the receiving view and its `superview` to use for alignment.
     /// - parameter inset: An optional inset (horizontal, vertical, or diagonal based on the position) to apply. An inset on .center is interpreted as a vertical offset.
@@ -225,7 +225,7 @@ extension UIView {
             assertionFailure("Can't align view without a superview!")
             return
         }
-        
+
         let offset: UIOffset
         switch position {
         case .topLeft:
@@ -247,10 +247,10 @@ extension UIView {
         case .bottomRight:
             offset = UIOffset(horizontal: -inset,   vertical: -inset)
         }
-        
+
         self.align(position, with: superview, position, offset: offset)
     }
-    
+
 }
 
 
@@ -259,46 +259,46 @@ extension UIView {
 
 /// A protocol to be adopted by views that should be aligned based on positions inset from their `bounds`.
 public protocol AlignmentPositionAdjusting {
-    
+
     /// An inset from the view's `bounds` for alignment.
     var alignmentPositionInsets: UIEdgeInsets { get }
-    
+
 }
 
 
 extension AlignmentPositionAdjusting {
-    
+
     /// The total vertical inset of the view's positioning bounds.
     public var verticalAlignmentInset: CGFloat {
         return alignmentPositionInsets.verticalAmount
     }
-    
+
     /// The total horizontal inset of the view's positioning bounds.
     public var horizontalAlignmentInset: CGFloat {
         return alignmentPositionInsets.horizontalAmount
     }
-    
+
 }
 
 
 extension UIView {
-    
+
     /// The hypothetical size that fits the view's content (inset from `bounds` if it conforms to `AlignmentPositionAdjusting`).
     /// - parameter size: the size within which to fit, passed through to `frameSize(thatFits:)`.
     /// - parameter constraints: Limits on the returned size (optional, defaults to `.none`).
     /// - returns: A size for the view's *alignment* bounds, suitable for use in a superview's `sizeThatFits()` implementation.
     public func contentSize(thatFits size: CGSize, constraints: SizingConstraints = .none) -> CGSize {
         let sizeThatFits = frameSize(thatFits: size, constraints: constraints)
-        
+
         if let insets = (self as? AlignmentPositionAdjusting)?.alignmentPositionInsets {
             return CGSize(width: sizeThatFits.width - (insets.left + insets.right),
                           height: sizeThatFits.height - (insets.top + insets.bottom))
-            
+
         } else {
             return sizeThatFits
         }
     }
-    
+
     /// The size that fits the view's current content (inset from `frame` if it conforms to `AlignmentPositionAdjusting`).
     public var frameContentSize: CGSize {
         if let insets = (self as? AlignmentPositionAdjusting)?.alignmentPositionInsets {
@@ -307,18 +307,18 @@ extension UIView {
             return frame.size
         }
     }
-    
+
 }
 
 
 extension UILabel: AlignmentPositionAdjusting {
-    
+
     /// Adoption of the `CustomPosition` protocol for UILabels, insetting the top and bottom coordinates based on the label's font metrics.
     public var alignmentPositionInsets: UIEdgeInsets {
         let capInsets = font.labelCapInsets(in: self)
         return UIEdgeInsets(top: capInsets.top, left: 0, bottom: capInsets.bottom, right: 0)
     }
-    
+
     /// The size that fits the label's text in `.wrap` mode,
     /// - parameter width: the width to fit the text, passed through to `frameSize(thatFits:)`.
     /// - parameter margins: An additional inset from the supplied width to use (optional, defaults to `0`).
@@ -328,5 +328,5 @@ extension UILabel: AlignmentPositionAdjusting {
     public func textSize(thatFitsWidth width: CGFloat, margins: CGFloat = 0, height: CGFloat = .greatestFiniteMagnitude) -> CGSize {
         return contentSize(thatFits: CGSize(width: max(0, width - 2 * margins), height: height), constraints: .wrap)
     }
-    
+
 }
