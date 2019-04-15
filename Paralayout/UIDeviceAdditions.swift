@@ -27,7 +27,7 @@ public enum ScreenSize {
 }
 
 
-public extension UIDevice {
+extension UIDevice {
     
     /// The physical size of the screen, and scale factor, e.g. '4.7" (2x)' or '5.5" (3x)'.
     public var screenSizeDescription: String {

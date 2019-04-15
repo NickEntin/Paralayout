@@ -17,7 +17,7 @@
 import UIKit
 
 
-public extension UIView {
+extension UIView {
     
     /// Constraints on the result of a call to `sizeThatFits(:)` or `sizeToFit()`.
     /// - `default`: no adjustment.
@@ -30,7 +30,7 @@ public extension UIView {
     /// - `minSize`: Use the supplied size or larger.
     /// - `maxSize`: Use the supplied size or smaller.
     /// - `wrap`: Use the supplied width regardless, and the supplied height or smaller.
-    struct SizingConstraints: OptionSet {
+    public struct SizingConstraints: OptionSet {
         public let rawValue: UInt
         public init(rawValue: UInt) {
             self.rawValue = rawValue

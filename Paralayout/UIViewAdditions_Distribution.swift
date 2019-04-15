@@ -333,7 +333,7 @@ public enum ViewDistributionItem: ViewDistributionSpecifying {
 // MARK: - Extensions
 
 
-public extension CGFloat {
+extension CGFloat {
     
     /// Use the value as a fixed spacer in a distribution.
     public var fixed: ViewDistributionItem {
@@ -348,7 +348,7 @@ public extension CGFloat {
 }
 
 
-public extension Double {
+extension Double {
     
     /// Use the value as a fixed spacer in a distribution.
     public var fixed: ViewDistributionItem {
@@ -363,7 +363,7 @@ public extension Double {
 }
 
 
-public extension Int {
+extension Int {
     
     /// Use the value as a fixed spacer in a distribution.
     public var fixed: ViewDistributionItem {

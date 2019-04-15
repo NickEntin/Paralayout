@@ -162,7 +162,7 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible {
 // MARK: - Extensions
 
 
-public extension CGSize {
+extension CGSize {
     
     /// The aspect ratio of this size.
     public var aspectRatio: AspectRatio {
@@ -172,7 +172,7 @@ public extension CGSize {
 }
 
 
-public extension CGRect {
+extension CGRect {
     
     fileprivate init(size newSize: CGSize, at position: Position, of alignmentRect: CGRect, in scaleFactor: ScaleFactorProviding) {
         let newOrigin: CGPoint

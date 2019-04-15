@@ -146,7 +146,7 @@ public class Hairline: UIView {
 // MARK: - Extensions
 
 
-public extension UIScreen {
+extension UIScreen {
     
     /// Returns the width of a hairline (in points) for a given scale factor.
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` for the theoretical "real" size).
@@ -164,7 +164,7 @@ public extension UIScreen {
     
 }
 
-public extension UIView {
+extension UIView {
     
     private static let defaultHairlineWidth = UIScreen.main.hairlineWidth
     

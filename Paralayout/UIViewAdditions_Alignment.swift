@@ -109,7 +109,7 @@ public enum Position {
 // MARK: -
 
 
-public extension UIView {
+extension UIView {
     
     // MARK: - View Alignment - Core
     
@@ -220,7 +220,7 @@ public extension UIView {
     /// Move the view to align it with another view.
     /// - parameter position: The position in both the receiving view and its `superview` to use for alignment.
     /// - parameter inset: An optional inset (horizontal, vertical, or diagonal based on the position) to apply. An inset on .center is interpreted as a vertical offset.
-    func alignToSuperview(_ position: Position, inset: CGFloat = 0.0) {
+    public func alignToSuperview(_ position: Position, inset: CGFloat = 0.0) {
         guard let superview = self.superview else {
             assertionFailure("Can't align view without a superview!")
             return
@@ -266,7 +266,7 @@ public protocol AlignmentPositionAdjusting {
 }
 
 
-public extension AlignmentPositionAdjusting {
+extension AlignmentPositionAdjusting {
     
     /// The total vertical inset of the view's positioning bounds.
     public var verticalAlignmentInset: CGFloat {
@@ -281,7 +281,7 @@ public extension AlignmentPositionAdjusting {
 }
 
 
-public extension UIView {
+extension UIView {
     
     /// The hypothetical size that fits the view's content (inset from `bounds` if it conforms to `AlignmentPositionAdjusting`).
     /// - parameter size: the size within which to fit, passed through to `frameSize(thatFits:)`.

@@ -97,7 +97,7 @@ extension Int: ScaleFactorProviding {
 // MARK: - Pixel-Sensitive Adjustment
 
 
-public extension CGFloat {
+extension CGFloat {
     
     private func adjustToPixel(_ scaleFactor: ScaleFactorProviding, _ adjustment: (CGFloat) -> CGFloat) -> CGFloat {
         let scale = scaleFactor.pixelsPerPoint
@@ -129,7 +129,7 @@ public extension CGFloat {
 }
 
 
-public extension CGPoint {
+extension CGPoint {
     
     /// Floor a coordinate (in points) to the nearest pixel, e.g. (0.6, 1.1) @2x -> (0.5, 1.0), not (0.0, 1.0)).
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
@@ -155,7 +155,7 @@ public extension CGPoint {
 }
 
 
-public extension CGSize {
+extension CGSize {
     
     /// Floor a size (in points) to the nearest pixel, e.g. (0.6, 1.1) @2x -> (0.5, 1.0), not (0.0, 1.0)).
     /// - parameter scaleFactor: The pixel scale to use, e.g. a UIScreen, UIView, or explicit value (pass `0` to *not* snap to pixel).
@@ -184,7 +184,7 @@ public extension CGSize {
 // MARK: - CGRect Convenience Methods
 
 
-public extension CGRect {
+extension CGRect {
     
     /// Initialize a CGRect with bounding coordinates (always with non-negative size).
     /// - parameter left: The first vertical edge of the rect.
@@ -263,15 +263,15 @@ public extension CGRect {
 // MARK: - UIEdgeInsets Convenience Methods
 
 
-public extension UIEdgeInsets {
+extension UIEdgeInsets {
     
     /// The combined top and bottom insets.
-    var verticalAmount: CGFloat {
+    public var verticalAmount: CGFloat {
         return top + bottom
     }
     
     /// The combined left and right insets.
-    var horizontalAmount: CGFloat {
+    public var horizontalAmount: CGFloat {
         return left + right
     }
 }
