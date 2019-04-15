@@ -16,7 +16,6 @@
 
 import UIKit
 
-
 /// A view that provides sizing and positioning conveniences for 1-pixel hairlines.
 public class Hairline: UIView {
 
@@ -142,9 +141,7 @@ public class Hairline: UIView {
 
 }
 
-
 // MARK: - Extensions
-
 
 extension UIScreen {
 

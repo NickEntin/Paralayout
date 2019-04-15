@@ -16,7 +16,6 @@
 
 import UIKit
 
-
 public protocol LabelDelegate: class {
     /**
      Called when the user taps a link in the label. This method should handle opening the link in the appropriate manner.
@@ -24,14 +23,12 @@ public protocol LabelDelegate: class {
     func label(_ label: Label, didTapLink url: URL, in range: NSRange)
 }
 
-
 /**
  This class exists purely to create a valid signature for `openURL` that can be used with #selector.
  */
 private class FakeApplication: NSObject {
     @objc func openURL(_ url: URL) -> Bool { return true }
 }
-
 
 /**
  A UILabel subclass which adds additional functionality. Notably, it adds additional attributes, such as `kerning` and `lineSpacing`, that can tailor the appearance of the label without needing to compose a new `attributedText` each time. It also adds the `lineWrapBehavior` attribute which allows tailoring of the wrapping behavior for the text for improved asthetics.

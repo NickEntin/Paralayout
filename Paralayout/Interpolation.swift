@@ -16,7 +16,6 @@
 
 import UIKit
 
-
 /// A method for constraining a value.
 /// - none: No adjustment.
 /// - minimum: Clamp values below the minimum.
@@ -92,9 +91,7 @@ public enum Clamp {
 
 }
 
-
 // MARK: -
-
 
 public struct Interpolation: Comparable {
 
@@ -319,5 +316,3 @@ public struct Interpolation: Comparable {
     }
 
 }
-
-

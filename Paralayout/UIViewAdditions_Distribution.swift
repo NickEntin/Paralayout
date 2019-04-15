@@ -16,9 +16,7 @@
 
 import UIKit
 
-
 // MARK: - Protocol
-
 
 /// A means of getting a `SubviewDistributionItem`: either a UIView, or a number as `.fixed` or `.flexible`.
 public protocol ViewDistributionSpecifying {
@@ -27,9 +25,7 @@ public protocol ViewDistributionSpecifying {
 
 }
 
-
 // MARK: - Types
-
 
 /// A direction for subview distribution.
 /// - `horizontal`: The horizontal direction, meaning views will be distributed left-to-right.
@@ -329,9 +325,7 @@ public enum ViewDistributionItem: ViewDistributionSpecifying {
 
 }
 
-
 // MARK: - Extensions
-
 
 extension CGFloat {
 
@@ -347,7 +341,6 @@ extension CGFloat {
 
 }
 
-
 extension Double {
 
     /// Use the value as a fixed spacer in a distribution.
@@ -362,7 +355,6 @@ extension Double {
 
 }
 
-
 extension Int {
 
     /// Use the value as a fixed spacer in a distribution.
@@ -376,7 +368,6 @@ extension Int {
     }
 
 }
-
 
 extension UIView : ViewDistributionSpecifying {
 

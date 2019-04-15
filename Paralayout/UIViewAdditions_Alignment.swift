@@ -16,7 +16,6 @@
 
 import UIKit
 
-
 /// Locations within a rectangle.
 public enum Position {
 
@@ -105,9 +104,7 @@ public enum Position {
 
 }
 
-
 // MARK: -
-
 
 extension UIView {
 
@@ -253,9 +250,7 @@ extension UIView {
 
 }
 
-
 // MARK: -
-
 
 /// A protocol to be adopted by views that should be aligned based on positions inset from their `bounds`.
 public protocol AlignmentPositionAdjusting {
@@ -264,7 +259,6 @@ public protocol AlignmentPositionAdjusting {
     var alignmentPositionInsets: UIEdgeInsets { get }
 
 }
-
 
 extension AlignmentPositionAdjusting {
 
@@ -279,7 +273,6 @@ extension AlignmentPositionAdjusting {
     }
 
 }
-
 
 extension UIView {
 
@@ -309,7 +302,6 @@ extension UIView {
     }
 
 }
-
 
 extension UILabel: AlignmentPositionAdjusting {
 

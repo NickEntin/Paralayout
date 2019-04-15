@@ -16,7 +16,6 @@
 
 import UIKit
 
-
 /// A value type representing the ratio between a width and a height.
 public struct AspectRatio: Comparable, CustomDebugStringConvertible {
 
@@ -158,9 +157,7 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible {
 
 }
 
-
 // MARK: - Extensions
-
 
 extension CGSize {
 
@@ -170,7 +167,6 @@ extension CGSize {
     }
 
 }
-
 
 extension CGRect {
 

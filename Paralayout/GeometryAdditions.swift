@@ -16,9 +16,7 @@
 
 import UIKit
 
-
 // MARK: - Operator Overloads
-
 
 /// Combine two offsets.
 public func +(lhs: UIOffset, rhs: UIOffset) -> UIOffset {
@@ -50,9 +48,7 @@ public func -(lhs: CGPoint, rhs: CGPoint) -> UIOffset {
     return UIOffset(horizontal: lhs.x - rhs.x, vertical: lhs.y - rhs.y)
 }
 
-
 // MARK: - ScaleFactorProviding Protocol
-
 
 /// The ratio of pixels to points, either of a UIScreen, a UIView's screen, or an explicit value.
 public protocol ScaleFactorProviding {
@@ -93,9 +89,7 @@ extension Int: ScaleFactorProviding {
 
 }
 
-
 // MARK: - Pixel-Sensitive Adjustment
-
 
 extension CGFloat {
 
@@ -128,7 +122,6 @@ extension CGFloat {
 
 }
 
-
 extension CGPoint {
 
     /// Floor a coordinate (in points) to the nearest pixel, e.g. (0.6, 1.1) @2x -> (0.5, 1.0), not (0.0, 1.0)).
@@ -153,7 +146,6 @@ extension CGPoint {
     }
 
 }
-
 
 extension CGSize {
 
@@ -180,9 +172,7 @@ extension CGSize {
 
 }
 
-
 // MARK: - CGRect Convenience Methods
-
 
 extension CGRect {
 
@@ -259,9 +249,7 @@ extension CGRect {
 
 }
 
-
 // MARK: - UIEdgeInsets Convenience Methods
-
 
 extension UIEdgeInsets {
 

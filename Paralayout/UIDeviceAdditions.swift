@@ -16,7 +16,6 @@
 
 import UIKit
 
-
 /// Screen sizes of known devices.
 public enum ScreenSize {
     static let threePointFiveInchPhone  = CGSize(width: 320, height: 480)
@@ -25,7 +24,6 @@ public enum ScreenSize {
     static let fivePointFiveInchPhone   = CGSize(width: 414, height: 736)
     static let fivePointEightInchPhone  = CGSize(width: 375, height: 812)
 }
-
 
 extension UIDevice {
 
@@ -73,5 +71,3 @@ extension UIDevice {
     }
 
 }
-
-
