@@ -58,7 +58,7 @@ class SnapshotTestCase: XCTestCase {
             fatalError("Attempting to run tests on a device for which we have not collected test data")
         }
 
-        isRecording = false
+        isRecording = true
     }
 
     // MARK: - Public Methods

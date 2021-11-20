@@ -67,14 +67,18 @@ public enum ViewDistributionAxis {
         }
     }
 
-    fileprivate func trailingEdge(of rect: CGRect, layoutDirection: UIUserInterfaceLayoutDirection) -> CGFloat {
+    fileprivate func trailingEdge(
+        of rect: CGRect,
+        layoutDirection: UIUserInterfaceLayoutDirection,
+        extendedBy additionalDistance: CGFloat = 0
+    ) -> CGFloat {
         switch (self, layoutDirection) {
         case (.horizontal, .leftToRight):
-            return rect.maxX
+            return rect.maxX + additionalDistance
         case (.horizontal, .rightToLeft):
-            return rect.minX
+            return rect.minX - additionalDistance
         case (.vertical, _):
-            return rect.maxY
+            return rect.maxY + additionalDistance
         @unknown default:
             fatalError("Unknown user interface layout direction")
         }
@@ -710,7 +714,7 @@ extension UIView : ViewDistributionSpecifying {
             subview.untransformedFrame = subviewFrame
 
             axis.setLeadingEdge(
-                axis.trailingEdge(of: subviewFrame, layoutDirection: receiverLayoutDirection),
+                axis.trailingEdge(of: subviewFrame, layoutDirection: receiverLayoutDirection, extendedBy: margin),
                 ofRect: &unroundedFrame,
                 layoutDirection: receiverLayoutDirection
             )
