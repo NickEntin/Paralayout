@@ -1,25 +1,15 @@
 # Paralayout
 
-[![CI Status](https://img.shields.io/github/actions/workflow/status/square/paralayout/ci.yml?branch=master)](https://github.com/square/paralayout/actions?query=workflow%3ACI+branch%3Amaster)
-[![Carthage Compatibility](https://img.shields.io/badge/carthage-✓-e2c245.svg)](https://github.com/Carthage/Carthage/)
-[![Version](https://img.shields.io/cocoapods/v/Paralayout.svg)](http://cocoadocs.org/docsets/Paralayout)
-[![License](https://img.shields.io/cocoapods/l/Paralayout.svg)](http://cocoadocs.org/docsets/Paralayout)
-[![Platform](https://img.shields.io/cocoapods/p/Paralayout.svg)](http://cocoadocs.org/docsets/Paralayout)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/NickEntin/paralayout/ci.yml?branch=main)](https://github.com/NickEntin/paralayout/actions?query=workflow%3ACI+branch%3Amain)
+[![Version](https://img.shields.io//github/v/release/NickEntin/Paralayout)](https://github.com/nickentin/paralayout/releases)
+[![License](https://img.shields.io/github/license/NickEntin/Paralayout)](https://github.com/NickEntin/Paralayout/blob/main/LICENSE)
 
 Paralayout is a set of simple, useful, and straightforward utilities that enable pixel-perfect layout in iOS. Your designers will love you.
 
+_Note: This is a permanent fork of Paralayout. This repo is intended to stand on its own and changes will not necessarily be upstreamed._
+
 
 ## Getting Started
-
-<details>
-<summary>CocoaPods</summary>
-
-To install Paralayout via [CocoaPods](http://cocoapods.org), add the following to your `Podfile`:
-
-```ruby
-pod 'Paralayout'
-```
-</details>
 
 <details>
 <summary>Swift Package Manager</summary>
@@ -28,31 +18,20 @@ To install Paralayout via [Swift Package Manager](https://swift.org/package-mana
 
 ```swift
 dependencies: [
-    .package(name: "Paralayout", url: "https://github.com/square/Paralayout.git", from: "2.0.0"),
+    .package(name: "Paralayout", url: "https://github.com/NickEntin/Paralayout.git", from: "2.0.0"),
 ]
 ```
 </details>
 
 <details>
-<summary>Bazel</summary>
+<summary>CocoaPods</summary>
 
-To install Paralayout via [Bazel](https://github.com/bazelbuild/bazel), add the following to your `MODULE.bazel`:
+To install Paralayout via [CocoaPods](http://cocoapods.org), add the following to your `Podfile`:
 
-```starlark
-bazel_dep(name = "paralayout", version = "2.0.0")
+```ruby
+pod 'Paralayout', :git => 'https://github.com/NickEntin/Paralayout.git'
 ```
 </details>
-
-<details>
-<summary>Carthage</summary>
-
-To install Paralayout via [Carthage](https://github.com/Carthage/Carthage), add the following to your `Cartfile`:
-
-```ogdl
-github "Square/Paralayout"
-```
-</details>
-
 
 ## Usage
 
@@ -156,7 +135,7 @@ The extra space within a label above the "cap height" and below the "baseline" o
 
 ## Requirements
 
-* iOS 13.0 or later
+* iOS 15.0 or later
 * Xcode 15.0 or later
 * Swift 5.9
 

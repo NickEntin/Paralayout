@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 
 jobs:
@@ -85,17 +85,3 @@ jobs:
         run: sudo xcode-select --switch /Applications/Xcode_16.app/Contents/Developer
       - name: Build
         run: Scripts/build.swift spm ${{ matrix.platform }} `which xcpretty`
-  bazel:
-    name: Bazel
-    runs-on: macOS-14
-    steps:
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3.5'
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-      - name: Select Xcode Version
-        run: sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
-      - name: Build and Test
-        run: bazel test //... --xcode_version=15.4.0
