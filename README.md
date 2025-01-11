@@ -33,16 +33,6 @@ pod 'Paralayout', :git => 'https://github.com/NickEntin/Paralayout.git'
 ```
 </details>
 
-<details>
-<summary>Bazel</summary>
-
-To install Paralayout via [Bazel](https://github.com/bazelbuild/bazel), add the following to your `MODULE.bazel`:
-
-```starlark
-bazel_dep(name = "paralayout", version = "2.0.0")
-```
-</details>
-
 ## Usage
 
 Paralayout is a set of *à la carte* utilities, of which you can use as much or as little functionality as you like.
