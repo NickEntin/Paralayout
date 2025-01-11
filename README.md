@@ -135,7 +135,7 @@ The extra space within a label above the "cap height" and below the "baseline" o
 
 ## Requirements
 
-* iOS 14.0 or later
+* iOS 15.0 or later
 * Xcode 15.0 or later
 * Swift 5.9
 
