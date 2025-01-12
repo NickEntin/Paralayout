@@ -1,5 +1,6 @@
 //
-//  Copyright © 2021 Square, Inc.
+//  Portions of this file are Copyright © 2025 Nick Entin
+//  Portions of this file are Copyright © 2021 Square, Inc.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -25,12 +26,17 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
     /// A constant spacer between two other elements.
     case fixed(CGFloat)
 
-    /// Proportional spacer, a fraction of the space not taken up by UIViews or fixed spacers.
+    /// A flexible spacer of a given weight. After accounting for all fixed-size elements and spacers, the remaining
+    /// space is allocated among the flexible items (spacers and proxies).
     case flexible(CGFloat)
+
+    /// A flexible layout proxy, which can be used to subsequently perform layout on a smaller portion of a view. After
+    /// accounting for all fixed-size elements and spacers, the remaining space is allocated among the flexible items
+    /// (spacers and proxies).
+    case flexibleProxy(FlexibleDistributionProxy)
 
     // MARK: - Public Properties
 
-    /// Itself: `DistributionItem` trivially conforms to `ViewDistributionSpecifying`.
     public var distributionItem: ViewDistributionItem {
         return self
     }
@@ -40,24 +46,25 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
         switch self {
         case .view, .fixed:
             return false
-        case .flexible:
+        case .flexible, .flexibleProxy:
             return true
         }
     }
 
     // MARK: - Internal Static Methods
 
-    /// Maps the specifiers to their provided items, and adds implied flexible spacers as necessary.
+    /// Maps the specifiers to their provided items and adds implied flexible spacers as necessary.
     ///
-    /// * If no spacers are included, equal flexible spacers are inserted between all views.
-    /// * If no `.flexible` spacers are included, two equal ones are added to the beginning and end.
+    /// * If no spacers (fixed or flexible) or flexible proxies are included, equal flexible spacers are inserted
+    ///   between all views.
+    /// * If no flexible spacers or proxies are included, two equal flexible spacers ones are added to the beginning and
+    ///   end of the distribution.
     ///
     /// - precondition: All views in the `distribution` must be subviews of the `superview`.
     /// - precondition: The `distribution` must not include any given view more than once.
     ///
     /// - returns: An array of `ViewDistributionItem`s suitable for layout and/or measurement, and tallies of all fixed
-    /// and flexible space. If the distribution is invalid (no views, any view not a subview of the superview, or any
-    /// view repeated in the distribution), returns an empty array.
+    /// and flexible space.
     internal static func items(
         impliedIn distribution: [ViewDistributionSpecifying],
         axis: ViewDistributionAxis,
@@ -68,6 +75,7 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
         var totalFixedSpace: CGFloat = 0
         var hasFixedSpacers: Bool = false
         var totalFlexibleSpace: CGFloat = 0
+        var hasProxy: Bool = false
 
         var subviewsToDistribute = Set<UIView>()
 
@@ -97,13 +105,17 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
 
             case .flexible:
                 totalFlexibleSpace += layoutSize
+
+            case .flexibleProxy:
+                totalFlexibleSpace += layoutSize
+                hasProxy = true
             }
 
             distributionItems.append(item)
         }
 
         // Exit early if no subviews were provided.
-        guard subviewsToDistribute.count > 0 else {
+        guard subviewsToDistribute.count > 0 || hasProxy else {
             return ([], 0, 0)
         }
 
@@ -128,18 +140,21 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
 
     // MARK: - Internal Methods
 
-    /// Returns the length of the DistributionItem (`axis` and `multiplier` are relevant only for `.view` and
-    /// `.flexible` items, respectively).
+    /// Returns the length of the distribution item (`axis` and `multiplier` are relevant only for `.view` and
+    /// flexible items).
     internal func layoutSize(along axis: ViewDistributionAxis, multiplier: CGFloat = 1) -> CGFloat {
         switch self {
-        case .view(let view, let insets):
-            return axis.size(of: view.untransformedFrame) - axis.amount(of: insets)
+        case let .view(view, insets):
+            axis.size(of: view.untransformedFrame) - axis.amount(of: insets)
 
-        case .fixed(let margin):
-            return margin
+        case let .fixed(margin):
+            margin
 
-        case .flexible(let space):
-            return space * multiplier
+        case let .flexible(weight):
+            weight * multiplier
+
+        case let .flexibleProxy(proxy):
+            proxy.weight * multiplier
         }
     }
 
@@ -147,7 +162,7 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
 
 // MARK: -
 
-/// A means of getting a `ViewDistributionItem`: either a UIView, or a number as `.fixed` or `.flexible`.
+/// A means of getting a `ViewDistributionItem`.
 @MainActor
 public protocol ViewDistributionSpecifying {
 
