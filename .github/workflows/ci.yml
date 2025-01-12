@@ -9,10 +9,10 @@ on:
 jobs:
   xcode-build:
     name: Xcode Build
-    runs-on: macOS-14
+    runs-on: macOS-15
     strategy:
       matrix:
-        platform: ['iOS_17', 'iPadOS_17']
+        platform: ['iOS_18', 'iPadOS_17']
       fail-fast: false
     steps:
       - name: Setup Ruby
@@ -22,7 +22,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Select Xcode Version
-        run: sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
+        run: sudo xcode-select --switch /Applications/Xcode_16.2.app/Contents/Developer
       - name: Bundle Install
         run: bundle install
       - name: Build and Test
