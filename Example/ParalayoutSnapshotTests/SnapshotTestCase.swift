@@ -64,9 +64,16 @@ class SnapshotTestCase: XCTestCase {
             guard SnapshotTestCase.testedDevices.contains(where: { $0.matchesCurrentDevice() }) else {
                 fatalError("Attempting to run tests on a device for which we have not collected test data")
             }
-
-            isRecording = false
         }.value
+    }
+
+    override func invokeTest() {
+        withSnapshotTesting(
+            record: .missing,
+            diffTool: .ksdiff
+        ) {
+            super.invokeTest()
+        }
     }
 
     // MARK: - Public Methods
