@@ -151,35 +151,39 @@ extension CGRect {
     public func slice(from edge: CGRectEdge, amount: CGFloat) -> (slice: CGRect, remainder: CGRect) {
         switch edge {
         case .minXEdge:
-            // Left.
-            assert(amount <= width, "Cannot slice rect \(self) at edge \(edge) by \(amount)!")
+            if amount > width {
+                ParalayoutAlertForInvalidSliceAmount()
+            }
             return (
                 CGRect(x: minX, y: minY, width: amount, height: height),
-                CGRect(x: minX + amount, y: minY, width: width - amount, height: height)
+                CGRect(x: minX + amount, y: minY, width: max(width - amount, 0), height: height)
             )
             
         case .minYEdge:
-            // Top.
-            assert(amount <= height, "Cannot slice rect \(self) at edge \(edge) by \(amount)!")
+            if amount > height {
+                ParalayoutAlertForInvalidSliceAmount()
+            }
             return(
                 CGRect(x: minX, y: minY, width: width, height: amount),
-                CGRect(x: minX, y: minY + amount, width: width, height: height - amount)
+                CGRect(x: minX, y: minY + amount, width: width, height: max(height - amount, 0))
             )
             
         case .maxXEdge:
-            // Right.
-            assert(amount <= width, "Cannot slice rect \(self) at edge \(edge) by \(amount)!")
+            if amount > width {
+                ParalayoutAlertForInvalidSliceAmount()
+            }
             return(
                 CGRect(x: maxX - amount, y: minY, width: amount, height: height),
-                CGRect(x: minX, y: minY, width: width - amount, height: height)
+                CGRect(x: min(minX, maxX - amount), y: minY, width: max(width - amount, 0), height: height)
             )
             
         case .maxYEdge:
-            // Bottom.
-            assert(amount <= height, "Cannot slice rect \(self) at edge \(edge) by \(amount)!")
+            if amount > height {
+                ParalayoutAlertForInvalidSliceAmount()
+            }
             return(
                 CGRect(x: minX, y: maxY - amount, width: width, height: amount),
-                CGRect(x: minX, y: minY, width: width, height: height - amount)
+                CGRect(x: minX, y: min(minY, maxY - amount), width: width, height: max(height - amount, 0))
             )
         }
     }
