@@ -66,10 +66,8 @@ extension UIView {
 
     /// Arranges subviews along the vertical axis according to a distribution with fixed and/or flexible spacers.
     ///
-    /// * If there are no flexible elements, this will treat the distribution as vertically centered (i.e. with two
+    /// If there are no flexible elements, this will treat the distribution as vertically centered (i.e. with two
     /// flexible elements of equal weight at the top and bottom, respectively).
-    /// * If there are no spacers (fixed or flexible), this will treat the distribution as equal flexible spacing
-    /// at the top, bottom, and between each view.
     ///
     /// **Examples:**
     ///
@@ -81,8 +79,7 @@ extension UIView {
     ///
     /// To evenly spread out items:
     /// ```
-    /// // This is effectively the same as [ 1.flexible, button1, 1.flexible, button2, 1.flexible, button3 ].
-    /// applyVerticalSubviewDistribution([ button1, button2, button3 ])
+    /// applyVerticalSubviewDistribution([ 1.flexible, button1, 1.flexible, button2, 1.flexible, button3, 1.flexible ])
     /// ```
     ///
     /// To stack two elements with 50% more space below than above:
@@ -153,10 +150,8 @@ extension UIView {
 #if swift(>=5.4)
     /// Arranges subviews along the vertical axis according to a distribution with fixed and/or flexible spacers.
     ///
-    /// * If there are no flexible elements, this will treat the distribution as vertically centered (i.e. with two
+    /// If there are no flexible elements, this will treat the distribution as vertically centered (i.e. with two
     /// flexible elements of equal weight at the top and bottom, respectively).
-    /// * If there are no spacers (fixed or flexible), this will treat the distribution as equal flexible spacing
-    /// at the top, bottom, and between each view.
     ///
     /// **Examples:**
     ///
@@ -172,11 +167,14 @@ extension UIView {
     ///
     /// To evenly spread out items:
     /// ```swift
-    /// // This is effectively the same as [ 1.flexible, button1, 1.flexible, button2, 1.flexible, button3 ].
     /// applyVerticalSubviewDistribution {
+    ///     1.flexible
     ///     button1
+    ///     1.flexible
     ///     button2
+    ///     1.flexible
     ///     button3
+    ///     1.flexible
     /// }
     /// ```
     ///
@@ -255,10 +253,8 @@ extension UIView {
 
     /// Arranges subviews along the horizontal axis according to a distribution with fixed and/or flexible spacers.
     ///
-    /// * If there are no flexible elements, this will treat the distribution as horizontally centered (i.e. with two
+    /// If there are no flexible elements, this will treat the distribution as horizontally centered (i.e. with two
     /// flexible elements of equal weight at the leading and trailing edges, respectively).
-    /// * If there are no spacers (fixed or flexible), this will treat the distribution as equal flexible spacing
-    /// at the leading edge, trailing edge, and between each view.
     ///
     /// **Examples:**
     ///
@@ -270,8 +266,7 @@ extension UIView {
     ///
     /// To evenly spread out items:
     /// ```
-    /// // This is effectively the same as [ 1.flexible, button1, 1.flexible, button2, 1.flexible, button3 ].
-    /// applyHorizontalSubviewDistribution([ button1, button2, button3 ])
+    /// applyHorizontalSubviewDistribution([ 1.flexible, button1, 1.flexible, button2, 1.flexible, button3 ])
     /// ```
     ///
     /// To stack two elements with 50% more space after than before:
@@ -335,10 +330,8 @@ extension UIView {
 #if swift(>=5.4)
     /// Arranges subviews along the horizontal axis according to a distribution with fixed and/or flexible spacers.
     ///
-    /// * If there are no flexible elements, this will treat the distribution as horizontally centered (i.e. with two
+    /// If there are no flexible elements, this will treat the distribution as horizontally centered (i.e. with two
     /// flexible elements of equal weight at the leading and trailing edges, respectively).
-    /// * If there are no spacers (fixed or flexible), this will treat the distribution as equal flexible spacing
-    /// at the leading edge, trailing edge, and between each view.
     ///
     /// **Examples:**
     ///
@@ -354,11 +347,14 @@ extension UIView {
     ///
     /// To evenly spread out items:
     /// ```swift
-    /// // This is effectively the same as [ 1.flexible, button1, 1.flexible, button2, 1.flexible, button3 ].
     /// applyHorizontalSubviewDistribution {
+    ///     1.flexible
     ///     button1
+    ///     1.flexible
     ///     button2
+    ///     1.flexible
     ///     button3
+    ///     1.flexible
     /// }
     /// ```
     ///

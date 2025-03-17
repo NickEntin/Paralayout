@@ -39,9 +39,13 @@ final class ViewDistributionSnapshotTests: SnapshotTestCase {
 
         containerView.applyVerticalSubviewDistribution(
             [
+                1.flexible,
                 firstView,
+                1.flexible,
                 secondView,
+                1.flexible,
                 thirdView,
+                1.flexible,
             ]
         )
         assertSnapshot(matching: containerView, as: .image, named: nameForSnapshot(with: ["vertical"]))
@@ -67,9 +71,13 @@ final class ViewDistributionSnapshotTests: SnapshotTestCase {
 
         containerView.applyVerticalSubviewDistribution(
             [
+                1.flexible,
                 firstView,
+                1.flexible,
                 secondView,
+                1.flexible,
                 thirdView,
+                1.flexible,
             ]
         )
         assertSnapshot(matching: containerView, as: .image, named: nameForSnapshot(with: []))
@@ -178,9 +186,13 @@ final class ViewDistributionSnapshotTests: SnapshotTestCase {
 
                 applyHorizontalSubviewDistribution(
                     [
+                        1.flexible,
                         label1.distributionItemUsingCapInsets,
+                        1.flexible,
                         label2.distributionItemUsingCapInsets,
+                        1.flexible,
                         label3.distributionItemUsingCapInsets,
+                        1.flexible,
                     ],
                     inRect: bounds.insetBy(bottom: 8),
                     orthogonalAlignment: .bottom(inset: 0)

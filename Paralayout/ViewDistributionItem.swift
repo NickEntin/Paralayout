@@ -66,7 +66,6 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
         var distributionItems = [ViewDistributionItem]()
         var totalViewSize: CGFloat = 0
         var totalFixedSpace: CGFloat = 0
-        var hasFixedSpacers: Bool = false
         var totalFlexibleSpace: CGFloat = 0
 
         var subviewsToDistribute = Set<UIView>()
@@ -93,7 +92,6 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
 
             case .fixed:
                 totalFixedSpace += layoutSize
-                hasFixedSpacers = true
 
             case .flexible:
                 totalFlexibleSpace += layoutSize
@@ -109,18 +107,10 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
 
         // Insert flexible space if necessary.
         if totalFlexibleSpace == 0 {
-            if !hasFixedSpacers {
-                // No spacers at all: insert `1.flexible` between all items.
-                for i in 0 ..< (distributionItems.count + 1) {
-                    distributionItems.insert(1.flexible, at: i * 2)
-                    totalFlexibleSpace += 1
-                }
-            } else {
-                // Only fixed spacers: add `1.flexible` on both ends.
-                distributionItems.insert(1.flexible, at: 0)
-                distributionItems.append(1.flexible)
-                totalFlexibleSpace += 2
-            }
+            // Only fixed spacers: add `1.flexible` on both ends.
+            distributionItems.insert(1.flexible, at: 0)
+            distributionItems.append(1.flexible)
+            totalFlexibleSpace += 2
         }
 
         return (distributionItems, totalFixedSpace + totalViewSize, totalFlexibleSpace)
@@ -207,4 +197,29 @@ extension Int {
         return .flexible(CGFloat(self))
     }
 
+}
+
+// MARK: -
+
+extension Array where Element: ViewDistributionSpecifying {
+    /// Return a distribution where the `interspersedItem` is inserted between each of the items in the receiver.
+    ///
+    /// For example, interspersing `16.fixed` into a distribution of
+    /// ```
+    /// [view1, view2, view3]
+    /// ```
+    /// gives a resulting distribution of
+    /// ```
+    /// [view1, 16.fixed, view2, 16.fixed, view3]
+    /// ```
+    @MainActor
+    public func interspersed(with interspersedItem: ViewDistributionItem) -> [ViewDistributionItem] {
+        reduce([]) { partial, next in
+            if partial.isEmpty {
+                [next.distributionItem]
+            } else {
+                partial + [interspersedItem, next.distributionItem]
+            }
+        }
+    }
 }
