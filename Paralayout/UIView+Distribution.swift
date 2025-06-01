@@ -1,5 +1,6 @@
 //
-//  Copyright © 2017 Square, Inc.
+//  Portions of this file are Copyright © 2025 Nick Entin
+//  Portions of this file are Copyright © 2017 Square, Inc.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -479,6 +480,40 @@ extension UIView {
                 frame = frame.outset(by: insets)
 
                 subview.untransformedFrame = frame
+
+            case let .flexibleProxy(proxy):
+                let size = switch axis {
+                case .horizontal:
+                    CGSize(width: flexibleSpaceMultiplier * proxy.weight, height: layoutBounds.height)
+                case .vertical:
+                    CGSize(width: layoutBounds.width, height: flexibleSpaceMultiplier * proxy.weight)
+                }
+
+                switch (axis, receiverLayoutDirection) {
+                case (.horizontal, .leftToRight):
+                    proxy.rect = CGRect(
+                        x: leadingEdgePosition,
+                        y: layoutBounds.minY,
+                        width: size.width,
+                        height: size.height
+                    )
+                case (.horizontal, .rightToLeft):
+                    proxy.rect = CGRect(
+                        x: leadingEdgePosition - size.width,
+                        y: layoutBounds.minY,
+                        width: size.width,
+                        height: size.height
+                    )
+                case (.vertical, _):
+                    proxy.rect = CGRect(
+                        x: layoutBounds.minX,
+                        y: leadingEdgePosition,
+                        width: size.width,
+                        height: size.height
+                    )
+                @unknown default:
+                    fatalError("Unknown user interface layout direction")
+                }
 
             case .fixed, .flexible:
                 break

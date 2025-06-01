@@ -211,9 +211,12 @@ extension ViewDistributionItem: Swift.Equatable { // TODO: `@retroactive Equatab
             lhsFixed == rhsFixed
         case let (.flexible(lhsFlexible), .flexible(rhsFlexible)):
             lhsFlexible == rhsFlexible
+        case let (.flexibleProxy(lhsProxy), .flexibleProxy(rhsProxy)):
+            lhsProxy === rhsProxy
         case (.view, _),
             (.fixed, _),
-            (.flexible, _):
+            (.flexible, _),
+            (.flexibleProxy, _):
             false
         }
     }
