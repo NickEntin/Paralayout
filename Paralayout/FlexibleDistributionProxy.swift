@@ -21,6 +21,10 @@ public final class FlexibleDistributionProxy: ViewDistributionSpecifying {
 
     // MARK: Initialization
 
+    /// Creates a flexible distribution proxy of the specified weight.
+    ///
+    /// When applying a distribution, this weight, along with the weights of any other flexible distribution proxies
+    /// and flexible spacers, is used to apportion the remaining space not taken up by fixed-size distribution items.
     public init(weight: CGFloat) {
         self.weight = weight
     }
