@@ -35,6 +35,9 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
     /// (spacers and proxies).
     case flexibleProxy(FlexibleDistributionProxy)
 
+    /// A fixed layout proxy, which can be used to subsequently perform layout on a smaller portion of a view.
+    case fixedProxy(FixedDistributionProxy)
+
     // MARK: - Public Properties
 
     public var distributionItem: ViewDistributionItem {
@@ -44,7 +47,7 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
     /// Whether or not this item is flexible.
     public var isFlexible: Bool {
         switch self {
-        case .view, .fixed:
+        case .view, .fixed, .fixedProxy:
             return false
         case .flexible, .flexibleProxy:
             return true
@@ -107,12 +110,16 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
             case .flexibleProxy:
                 totalFlexibleSpace += layoutSize
                 hasProxy = true
+
+            case .fixedProxy:
+                totalFixedSpace += layoutSize
+                hasProxy = true
             }
 
             distributionItems.append(item)
         }
 
-        // Exit early if no subviews were provided.
+        // Exit early if no subviews or proxies were provided.
         guard subviewsToDistribute.count > 0 || hasProxy else {
             return ([], 0, 0)
         }
@@ -145,6 +152,9 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
 
         case let .flexibleProxy(proxy):
             proxy.weight * multiplier
+
+        case let .fixedProxy(proxy):
+            proxy.length
         }
     }
 

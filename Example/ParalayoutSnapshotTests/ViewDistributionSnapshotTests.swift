@@ -268,6 +268,63 @@ final class ViewDistributionSnapshotTests: SnapshotTestCase {
         assertSnapshot(of: containerView, as: .image, named: nameForSnapshot(with: ["vertical"]))
     }
 
+    @MainActor
+    func testFixedDistributionProxy() {
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 400, height: 200))
+        containerView.backgroundColor = .white
+
+        let firstView = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        firstView.backgroundColor = .blue.withAlphaComponent(0.5)
+        containerView.addSubview(firstView)
+
+        let secondView = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        secondView.backgroundColor = .blue.withAlphaComponent(0.5)
+        containerView.addSubview(secondView)
+
+        let firstProxy = FixedDistributionProxy(length: 24)
+        let firstProxyView = UIView(frame: .zero)
+        firstProxyView.backgroundColor = .red.withAlphaComponent(0.5)
+        containerView.addSubview(firstProxyView)
+
+        let secondProxy = FixedDistributionProxy(length: 48)
+        let secondProxyView = UIView(frame: .zero)
+        secondProxyView.backgroundColor = .green.withAlphaComponent(0.5)
+        containerView.addSubview(secondProxyView)
+
+        containerView.semanticContentAttribute = .forceLeftToRight
+        containerView.applyHorizontalSubviewDistribution(inRect: containerView.bounds.insetBy(left: 10, top: 20, right: 30, bottom: 40)) {
+            firstView
+            firstProxy
+            secondView
+            secondProxy
+        }
+        firstProxyView.frame = firstProxy.rect
+        secondProxyView.frame = secondProxy.rect
+        assertSnapshot(of: containerView, as: .image, named: nameForSnapshot(with: ["horizontal", "LTR"]))
+
+        containerView.semanticContentAttribute = .forceRightToLeft
+        containerView.applyHorizontalSubviewDistribution(inRect: containerView.bounds.insetBy(left: 10, top: 20, right: 30, bottom: 40)) {
+            firstView
+            firstProxy
+            secondView
+            secondProxy
+        }
+        firstProxyView.frame = firstProxy.rect
+        secondProxyView.frame = secondProxy.rect
+        assertSnapshot(of: containerView, as: .image, named: nameForSnapshot(with: ["horizontal", "RTL"]))
+
+        containerView.frame = CGRect(x: 0, y: 0, width: 200, height: 400)
+        containerView.applyVerticalSubviewDistribution(inRect: containerView.bounds.insetBy(left: 10, top: 20, right: 30, bottom: 40)) {
+            firstView
+            firstProxy
+            secondView
+            secondProxy
+        }
+        firstProxyView.frame = firstProxy.rect
+        secondProxyView.frame = secondProxy.rect
+        assertSnapshot(of: containerView, as: .image, named: nameForSnapshot(with: ["vertical"]))
+    }
+
 }
 
 // MARK: -

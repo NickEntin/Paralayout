@@ -515,6 +515,40 @@ extension UIView {
                     fatalError("Unknown user interface layout direction")
                 }
 
+            case let .fixedProxy(proxy):
+                let size = switch axis {
+                case .horizontal:
+                    CGSize(width: proxy.length, height: layoutBounds.height)
+                case .vertical:
+                    CGSize(width: layoutBounds.width, height: proxy.length)
+                }
+
+                switch (axis, receiverLayoutDirection) {
+                case (.horizontal, .leftToRight):
+                    proxy.rect = CGRect(
+                        x: leadingEdgePosition,
+                        y: layoutBounds.minY,
+                        width: size.width,
+                        height: size.height
+                    )
+                case (.horizontal, .rightToLeft):
+                    proxy.rect = CGRect(
+                        x: leadingEdgePosition - size.width,
+                        y: layoutBounds.minY,
+                        width: size.width,
+                        height: size.height
+                    )
+                case (.vertical, _):
+                    proxy.rect = CGRect(
+                        x: layoutBounds.minX,
+                        y: leadingEdgePosition,
+                        width: size.width,
+                        height: size.height
+                    )
+                @unknown default:
+                    fatalError("Unknown user interface layout direction")
+                }
+
             case .fixed, .flexible:
                 break
             }
