@@ -1,5 +1,6 @@
 //
-//  Copyright © 2021 Square, Inc.
+//  Portions of this file are Copyright © 2025 Nick Entin
+//  Portions of this file are Copyright © 2021 Square, Inc.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -18,7 +19,7 @@ import UIKit
 
 /// Describes an object that can participate in alignment. In practice, this represents a view.
 @MainActor
-public protocol Alignable {
+public protocol Alignable: VerticallyDistributable {
 
     var alignmentContext: AlignmentContext { get }
 
@@ -39,6 +40,24 @@ public struct AlignmentContext {
     public var view: UIView
 
     public var alignmentBounds: CGRect
+
+}
+
+// MARK: -
+
+extension AlignmentContext: VerticallyDistributable {
+
+    public var verticalDistributionItem: VerticalDistributionItem {
+        .view(view, alignmentBounds: alignmentBounds, orthogonalAlignment: nil)
+    }
+
+}
+
+extension Alignable {
+
+    public var verticalDistributionItem: VerticalDistributionItem {
+        alignmentContext.verticalDistributionItem
+    }
 
 }
 

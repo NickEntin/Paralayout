@@ -16,6 +16,8 @@
 
 import UIKit
 
+/*
+
 #if swift(>=5.4)
 @resultBuilder
 public struct ViewDistributionBuilder {
@@ -87,3 +89,5 @@ public struct ViewDistributionBuilder {
     }
 }
 #endif
+
+*/

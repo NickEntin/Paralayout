@@ -17,7 +17,7 @@
 import UIKit
 
 @MainActor
-public final class FixedDistributionProxy: ViewDistributionSpecifying {
+public final class FixedDistributionProxy: VerticallyDistributable {
 
     // MARK: Initialization
 
@@ -41,7 +41,7 @@ public final class FixedDistributionProxy: ViewDistributionSpecifying {
 
     // MARK: ViewDistributionSpecifying
 
-    public var distributionItem: ViewDistributionItem {
+    public var verticalDistributionItem: VerticalDistributionItem {
         .fixedProxy(self)
     }
 

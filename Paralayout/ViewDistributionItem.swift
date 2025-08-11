@@ -17,6 +17,8 @@
 
 import UIKit
 
+/*
+
 /// An element of a horizontal or vertical distribution.
 public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
 
@@ -54,6 +56,8 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
         }
     }
 
+ */
+
     // MARK: - Internal Static Methods
 
     /// Maps the specifiers to their provided items and adds implied flexible spacers as necessary.
@@ -73,18 +77,18 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
         axis: ViewDistributionAxis,
         superview: UIView?
     ) -> (items: [ViewDistributionItem], totalFixedSpace: CGFloat, flexibleSpaceDenominator: CGFloat) {
-        var distributionItems = [ViewDistributionItem]()
-        var totalViewSize: CGFloat = 0
-        var totalFixedSpace: CGFloat = 0
-        var totalFlexibleSpace: CGFloat = 0
-        var hasProxy: Bool = false
-
-        var subviewsToDistribute = Set<UIView>()
+//        var distributionItems = [ViewDistributionItem]()
+//        var totalViewSize: CGFloat = 0
+//        var totalFixedSpace: CGFloat = 0
+//        var totalFlexibleSpace: CGFloat = 0
+//        var hasProxy: Bool = false
+//
+//        var subviewsToDistribute = Set<UIView>()
 
         // Map the specifiers to items, tallying up space along the way.
         for specifier in distribution {
-            let item = specifier.distributionItem
-            let layoutSize = item.layoutSize(along: axis)
+//            let item = specifier.distributionItem
+//            let layoutSize = item.layoutSize(along: axis)
 
             switch item {
             case .view(let view, _):
@@ -133,49 +137,6 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
         }
 
         return (distributionItems, totalFixedSpace + totalViewSize, totalFlexibleSpace)
-    }
-
-    // MARK: - Internal Methods
-
-    /// Returns the length of the distribution item (`axis` and `multiplier` are relevant only for `.view` and
-    /// flexible items).
-    internal func layoutSize(along axis: ViewDistributionAxis, multiplier: CGFloat = 1) -> CGFloat {
-        switch self {
-        case let .view(view, insets):
-            axis.size(of: view.untransformedFrame) - axis.amount(of: insets)
-
-        case let .fixed(margin):
-            margin
-
-        case let .flexible(weight):
-            weight * multiplier
-
-        case let .flexibleProxy(proxy):
-            proxy.weight * multiplier
-
-        case let .fixedProxy(proxy):
-            proxy.length
-        }
-    }
-
-}
-
-// MARK: -
-
-/// A means of getting a `ViewDistributionItem`.
-@MainActor
-public protocol ViewDistributionSpecifying {
-
-    var distributionItem: ViewDistributionItem { get }
-
-}
-
-extension UIView: ViewDistributionSpecifying {
-
-    // Adopt `ViewDistributionSpecifying`, making it possible to include UIView instances directly in distributions
-    // passed to `apply{Vertical,Horizontal}SubviewDistribution()`.
-    public var distributionItem: ViewDistributionItem {
-        return .view(self, .zero)
     }
 
 }
@@ -248,3 +209,5 @@ extension Array where Element: ViewDistributionSpecifying {
         }
     }
 }
+
+*/

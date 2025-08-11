@@ -119,33 +119,120 @@ extension UIView {
     /// coordinate space. Specify `nil` to use the receiver's bounds. Defaults to `nil`.
     /// - parameter orthogonalAlignment: The horizontal alignment to apply to the views. If `nil`, views are left in
     /// their horizontal position prior to the distribution. Defaults to centered with no offset.
-    public func applyVerticalSubviewDistribution(
-        _ distribution: [ViewDistributionSpecifying],
+    public func applyVerticalDistribution(
+        _ distribution: [VerticallyDistributable],
         inRect layoutBounds: CGRect? = nil,
         orthogonalAlignment: HorizontalDistributionAlignment? = .centered(offset: 0)
     ) {
-        applySubviewDistribution(distribution, axis: .vertical, inRect: layoutBounds) { frame, layoutBounds in
-            guard let horizontalAlignment = orthogonalAlignment else {
-                return
+        func produceItems() -> ([VerticalDistributionItem], CGFloat, CGFloat) {
+            var distributionItems: [VerticalDistributionItem] = []
+            var totalViewSize: CGFloat = 0
+            var totalFixedSpace: CGFloat = 0
+            var totalFlexibleSpace: CGFloat = 0
+            var hasProxy: Bool = false
+            var subviewsToDistribute: Set<UIView> = []
+
+            // Map the specifiers to items, tallying up space along the way.
+            for specifier in distribution {
+                let item = specifier.verticalDistributionItem
+                let layoutSize = item.layoutSize(flexibleMultiplier: 1)
+
+                switch item {
+                case let .view(view, _, _):
+                    // Validate the view.
+                    guard view.superview === self else {
+                        fatalError("\(view) is not a subview of \(String(describing: self))!")
+                    }
+
+                    guard !subviewsToDistribute.contains(view) else {
+                        fatalError("\(view) is included twice in \(distribution)!")
+                    }
+
+                    subviewsToDistribute.insert(view)
+
+                    totalViewSize += layoutSize
+
+                case .fixed:
+                    totalFixedSpace += layoutSize
+
+                case .flexible:
+                    totalFlexibleSpace += layoutSize
+
+                case .flexibleProxy:
+                    totalFlexibleSpace += layoutSize
+                    hasProxy = true
+
+                case .fixedProxy:
+                    totalFixedSpace += layoutSize
+                    hasProxy = true
+                }
+
+                distributionItems.append(item)
             }
 
-            switch (horizontalAlignment, effectiveUserInterfaceLayoutDirection) {
-            case let (.leading(inset: inset), .leftToRight):
-                frame.origin.x = (layoutBounds.minX + inset).roundedToPixel(in: self)
-            case let (.leading(inset: inset), .rightToLeft):
-                frame.origin.x = (layoutBounds.maxX - (frame.width + inset)).roundedToPixel(in: self)
-            case let (.centered(offset: offset), .leftToRight):
-                frame.origin.x = (layoutBounds.midX - frame.width / 2 + offset).roundedToPixel(in: self)
-            case let (.centered(offset: offset), .rightToLeft):
-                frame.origin.x = (layoutBounds.midX - frame.width / 2 - offset).roundedToPixel(in: self)
-            case let (.trailing(inset: inset), .leftToRight):
-                frame.origin.x = (layoutBounds.maxX - (frame.width + inset)).roundedToPixel(in: self)
-            case let (.trailing(inset: inset), .rightToLeft):
-                frame.origin.x = (layoutBounds.minX + inset).roundedToPixel(in: self)
-            @unknown default:
-                fatalError("Unknown user interface layout direction")
+            // Exit early if no subviews or proxies were provided.
+            guard subviewsToDistribute.count > 0 || hasProxy else {
+                return ([], 0, 0)
+            }
+
+            // Insert flexible space if necessary.
+            if totalFlexibleSpace == 0 {
+                // Only fixed spacers: add `1.flexible` on both ends.
+                distributionItems.insert(1.flexible, at: 0)
+                distributionItems.append(1.flexible)
+                totalFlexibleSpace += 2
+            }
+
+            return (distributionItems, totalFixedSpace + totalViewSize, totalFlexibleSpace)
+        }
+
+        let (items, totalFixedSpace, flexibleSpaceDenominator) = produceItems()
+
+        guard items.count > 0 else {
+            return
+        }
+
+        // Determine the layout parameters based on the space the distribution is going into.
+        let layoutBounds = layoutBounds ?? bounds
+        let flexibleSpaceMultiplier = (axis.size(of: layoutBounds) - totalFixedSpace) / flexibleSpaceDenominator
+        let receiverLayoutDirection = effectiveUserInterfaceLayoutDirection
+
+        let leadingEdgeX = switch receiverLayoutDirection {
+        case .leftToRight: layoutBounds.minX
+        case .rightToLeft: layoutBounds.maxX
+        }
+
+        for item in items {
+            switch item {
+            case let .view(view, alignmentBounds, orthogonalAlignment):
+                var frame = view.untransformedFrame
+                view.align(.topLeading, withSuperviewPoint: <#T##CGPoint#>)
             }
         }
+
+
+//        applySubviewDistribution(distribution, axis: .vertical, inRect: layoutBounds) { frame, layoutBounds in
+//            guard let horizontalAlignment = orthogonalAlignment else {
+//                return
+//            }
+//
+//            switch (horizontalAlignment, effectiveUserInterfaceLayoutDirection) {
+//            case let (.leading(inset: inset), .leftToRight):
+//                frame.origin.x = (layoutBounds.minX + inset).roundedToPixel(in: self)
+//            case let (.leading(inset: inset), .rightToLeft):
+//                frame.origin.x = (layoutBounds.maxX - (frame.width + inset)).roundedToPixel(in: self)
+//            case let (.centered(offset: offset), .leftToRight):
+//                frame.origin.x = (layoutBounds.midX - frame.width / 2 + offset).roundedToPixel(in: self)
+//            case let (.centered(offset: offset), .rightToLeft):
+//                frame.origin.x = (layoutBounds.midX - frame.width / 2 - offset).roundedToPixel(in: self)
+//            case let (.trailing(inset: inset), .leftToRight):
+//                frame.origin.x = (layoutBounds.maxX - (frame.width + inset)).roundedToPixel(in: self)
+//            case let (.trailing(inset: inset), .rightToLeft):
+//                frame.origin.x = (layoutBounds.minX + inset).roundedToPixel(in: self)
+//            @unknown default:
+//                fatalError("Unknown user interface layout direction")
+//            }
+//        }
     }
 
 #if swift(>=5.4)
@@ -242,7 +329,7 @@ extension UIView {
     public func applyVerticalSubviewDistribution(
         inRect layoutBounds: CGRect? = nil,
         orthogonalAlignment: HorizontalDistributionAlignment? = .centered(offset: 0),
-        @ViewDistributionBuilder _ distribution: () -> [ViewDistributionSpecifying]
+        @VerticalDistributionBuilder _ distribution: () -> [VerticallyDistributable]
     ) {
         applyVerticalSubviewDistribution(
             distribution(),
@@ -251,6 +338,8 @@ extension UIView {
         )
     }
 #endif
+
+/*
 
     /// Arranges subviews along the horizontal axis according to a distribution with fixed and/or flexible spacers.
     ///
@@ -435,6 +524,7 @@ extension UIView {
 
     // MARK: - Private Methods
 
+*/
     private func applySubviewDistribution(
         _ distribution: [ViewDistributionSpecifying],
         axis: ViewDistributionAxis,
@@ -573,5 +663,4 @@ extension UIView {
             }
         }
     }
-
 }
