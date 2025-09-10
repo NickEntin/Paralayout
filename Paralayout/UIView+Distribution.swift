@@ -117,12 +117,11 @@ extension UIView {
     /// - parameter distribution: An array of distribution specifiers, ordered from the top edge to the bottom edge.
     /// - parameter layoutBounds: The region in the receiver in which to distribute the view in the receiver's
     /// coordinate space. Specify `nil` to use the receiver's bounds. Defaults to `nil`.
-    /// - parameter orthogonalAlignment: The horizontal alignment to apply to the views. If `nil`, views are left in
-    /// their horizontal position prior to the distribution. Defaults to centered with no offset.
+    /// - parameter orthogonalAlignment: The horizontal alignment to apply to the views if no item-specific orthogonal alignment is specified. Defaults to centered with no offset.
     public func applyVerticalDistribution(
         _ distribution: [VerticallyDistributable],
         inRect layoutBounds: CGRect? = nil,
-        orthogonalAlignment: HorizontalDistributionAlignment? = .centered(offset: 0)
+        orthogonalAlignment: HorizontalDistributionAlignment = .centered(offset: 0)
     ) {
         func produceItems() -> ([VerticalDistributionItem], CGFloat, CGFloat) {
             var distributionItems: [VerticalDistributionItem] = []
@@ -138,18 +137,15 @@ extension UIView {
                 let layoutSize = item.layoutSize(flexibleMultiplier: 1)
 
                 switch item {
-                case let .view(view, _, _):
-                    // Validate the view.
+                case let .view(alignable, _):
+                    let view = alignable.alignmentContext.view
                     guard view.superview === self else {
                         fatalError("\(view) is not a subview of \(String(describing: self))!")
                     }
-
                     guard !subviewsToDistribute.contains(view) else {
                         fatalError("\(view) is included twice in \(distribution)!")
                     }
-
                     subviewsToDistribute.insert(view)
-
                     totalViewSize += layoutSize
 
                 case .fixed:
@@ -178,8 +174,8 @@ extension UIView {
             // Insert flexible space if necessary.
             if totalFlexibleSpace == 0 {
                 // Only fixed spacers: add `1.flexible` on both ends.
-                distributionItems.insert(1.flexible, at: 0)
-                distributionItems.append(1.flexible)
+                distributionItems.insert(.flexible(1), at: 0)
+                distributionItems.append(.flexible(1))
                 totalFlexibleSpace += 2
             }
 
@@ -194,20 +190,70 @@ extension UIView {
 
         // Determine the layout parameters based on the space the distribution is going into.
         let layoutBounds = layoutBounds ?? bounds
-        let flexibleSpaceMultiplier = (axis.size(of: layoutBounds) - totalFixedSpace) / flexibleSpaceDenominator
-        let receiverLayoutDirection = effectiveUserInterfaceLayoutDirection
+        let flexibleSpaceMultiplier = (layoutBounds.height - totalFixedSpace) / flexibleSpaceDenominator
 
-        let leadingEdgeX = switch receiverLayoutDirection {
-        case .leftToRight: layoutBounds.minX
-        case .rightToLeft: layoutBounds.maxX
+        let towardsTrailingIsPositive = switch effectiveUserInterfaceLayoutDirection {
+        case .leftToRight: true
+        case .rightToLeft: false
+        @unknown default: true
         }
 
+//      For the horizontal distribution:
+//        var leadingEdgeX = switch receiverLayoutDirection {
+//        case .leftToRight: layoutBounds.minX
+//        case .rightToLeft: layoutBounds.maxX
+//        @unknown default: layoutBounds.minX
+//        }
+//        func advanceLeadingEdge(by distance: CGFloat) {
+//            switch receiverLayoutDirection {
+//            case .leftToRight: leadingEdgeX += distance
+//            case .rightToLeft: leadingEdgeX -= distance
+//            @unknown default: leadingEdgeX += distance
+//            }
+//        }
+
+        var topEdgeY: CGFloat = layoutBounds.minY
         for item in items {
             switch item {
-            case let .view(view, alignmentBounds, orthogonalAlignment):
-                var frame = view.untransformedFrame
-                view.align(.topLeading, withSuperviewPoint: <#T##CGPoint#>)
+            case let .view(alignable, itemOrthogonalAlignment):
+                // @NICK TODO: Should it be using the leading/trailing alignment values here, or based on the receiver's direction only?
+                switch (itemOrthogonalAlignment ?? orthogonalAlignment, towardsTrailingIsPositive) {
+                case let (.centered(offset), true):
+                    alignable.align(.topCenter, withSuperviewPoint: .init(x: layoutBounds.midX + offset, y: topEdgeY))
+                case let (.centered(offset), false):
+                    alignable.align(.topCenter, withSuperviewPoint: .init(x: layoutBounds.midX - offset, y: topEdgeY))
+                case let (.leading(inset), true):
+                    alignable.align(.topLeading, withSuperviewPoint: .init(x: layoutBounds.minX + inset, y: topEdgeY))
+                case let (.leading(inset), false):
+                    alignable.align(.topLeading, withSuperviewPoint: .init(x: layoutBounds.maxX - inset, y: topEdgeY))
+                case let (.trailing(inset), true):
+                    alignable.align(.topTrailing, withSuperviewPoint: .init(x: layoutBounds.maxX - inset, y: topEdgeY))
+                case let (.trailing(inset), false):
+                    alignable.align(.topTrailing, withSuperviewPoint: .init(x: layoutBounds.minX + inset, y: topEdgeY))
+                }
+
+            case let .fixedProxy(proxy):
+                proxy.rect = CGRect(
+                    x: layoutBounds.minX,
+                    y: topEdgeY,
+                    width: layoutBounds.width,
+                    height: proxy.length
+                )
+
+            case let .flexibleProxy(proxy):
+                proxy.rect = CGRect(
+                    x: layoutBounds.minX,
+                    y: topEdgeY,
+                    width: layoutBounds.width,
+                    height: item.layoutSize(flexibleMultiplier: flexibleSpaceMultiplier)
+                )
+
+            case .fixed, .flexible:
+                break
             }
+
+            // Note we don't round/floor here, but rather when setting the position of each subview individually, so that rounding error is not accumulated.
+            topEdgeY += item.layoutSize(flexibleMultiplier: flexibleSpaceMultiplier)
         }
 
 

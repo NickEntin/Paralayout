@@ -16,6 +16,7 @@
 
 import UIKit
 
+// @NICK TODO: Remove
 /// A direction for subview distribution.
 internal enum ViewDistributionAxis {
 

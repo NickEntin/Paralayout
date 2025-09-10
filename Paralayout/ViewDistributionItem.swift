@@ -55,90 +55,6 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
             return true
         }
     }
-
- */
-
-    // MARK: - Internal Static Methods
-
-    /// Maps the specifiers to their provided items and adds implied flexible spacers as necessary.
-    ///
-    /// * If no spacers (fixed or flexible) or flexible proxies are included, equal flexible spacers are inserted
-    ///   between all views.
-    /// * If no flexible spacers or proxies are included, two equal flexible spacers ones are added to the beginning and
-    ///   end of the distribution.
-    ///
-    /// - precondition: All views in the `distribution` must be subviews of the `superview`.
-    /// - precondition: The `distribution` must not include any given view more than once.
-    ///
-    /// - returns: An array of `ViewDistributionItem`s suitable for layout and/or measurement, and tallies of all fixed
-    /// and flexible space.
-    internal static func items(
-        impliedIn distribution: [ViewDistributionSpecifying],
-        axis: ViewDistributionAxis,
-        superview: UIView?
-    ) -> (items: [ViewDistributionItem], totalFixedSpace: CGFloat, flexibleSpaceDenominator: CGFloat) {
-//        var distributionItems = [ViewDistributionItem]()
-//        var totalViewSize: CGFloat = 0
-//        var totalFixedSpace: CGFloat = 0
-//        var totalFlexibleSpace: CGFloat = 0
-//        var hasProxy: Bool = false
-//
-//        var subviewsToDistribute = Set<UIView>()
-
-        // Map the specifiers to items, tallying up space along the way.
-        for specifier in distribution {
-//            let item = specifier.distributionItem
-//            let layoutSize = item.layoutSize(along: axis)
-
-            switch item {
-            case .view(let view, _):
-                // Validate the view.
-                guard superview == nil || view.superview === superview else {
-                    fatalError("\(view) is not a subview of \(String(describing: superview))!")
-                }
-
-                guard !subviewsToDistribute.contains(view) else {
-                    fatalError("\(view) is included twice in \(distribution)!")
-                }
-
-                subviewsToDistribute.insert(view)
-
-                totalViewSize += layoutSize
-
-            case .fixed:
-                totalFixedSpace += layoutSize
-
-            case .flexible:
-                totalFlexibleSpace += layoutSize
-
-            case .flexibleProxy:
-                totalFlexibleSpace += layoutSize
-                hasProxy = true
-
-            case .fixedProxy:
-                totalFixedSpace += layoutSize
-                hasProxy = true
-            }
-
-            distributionItems.append(item)
-        }
-
-        // Exit early if no subviews or proxies were provided.
-        guard subviewsToDistribute.count > 0 || hasProxy else {
-            return ([], 0, 0)
-        }
-
-        // Insert flexible space if necessary.
-        if totalFlexibleSpace == 0 {
-            // Only fixed spacers: add `1.flexible` on both ends.
-            distributionItems.insert(1.flexible, at: 0)
-            distributionItems.append(1.flexible)
-            totalFlexibleSpace += 2
-        }
-
-        return (distributionItems, totalFixedSpace + totalViewSize, totalFlexibleSpace)
-    }
-
 }
 
 // MARK: -
@@ -183,31 +99,6 @@ extension Int {
         return .flexible(CGFloat(self))
     }
 
-}
-
-// MARK: -
-
-extension Array where Element: ViewDistributionSpecifying {
-    /// Return a distribution where the `interspersedItem` is inserted between each of the items in the receiver.
-    ///
-    /// For example, interspersing `16.fixed` into a distribution of
-    /// ```
-    /// [view1, view2, view3]
-    /// ```
-    /// gives a resulting distribution of
-    /// ```
-    /// [view1, 16.fixed, view2, 16.fixed, view3]
-    /// ```
-    @MainActor
-    public func interspersed(with interspersedItem: ViewDistributionItem) -> [ViewDistributionItem] {
-        reduce([]) { partial, next in
-            if partial.isEmpty {
-                [next.distributionItem]
-            } else {
-                partial + [interspersedItem, next.distributionItem]
-            }
-        }
-    }
 }
 
 */

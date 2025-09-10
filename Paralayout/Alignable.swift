@@ -45,18 +45,10 @@ public struct AlignmentContext {
 
 // MARK: -
 
-extension AlignmentContext: VerticallyDistributable {
-
-    public var verticalDistributionItem: VerticalDistributionItem {
-        .view(view, alignmentBounds: alignmentBounds, orthogonalAlignment: nil)
-    }
-
-}
-
 extension Alignable {
 
     public var verticalDistributionItem: VerticalDistributionItem {
-        alignmentContext.verticalDistributionItem
+        .view(self, orthogonalAlignment: nil)
     }
 
 }

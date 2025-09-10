@@ -11,8 +11,7 @@ public protocol VerticallyDistributable {
 
 public enum VerticalDistributionItem: VerticallyDistributable {
 
-    case view(UIView, alignmentBounds: CGRect, orthogonalAlignment: HorizontalDistributionAlignment? = nil)
-//    case view(Alignable, orthogonalAlignment: HorizontalDistributionAlignment? = nil)
+    case view(Alignable, orthogonalAlignment: HorizontalDistributionAlignment? = nil)
 
     case fixed(CGFloat)
 
@@ -32,8 +31,8 @@ public enum VerticalDistributionItem: VerticallyDistributable {
 
     func layoutSize(flexibleMultiplier: CGFloat) -> CGFloat {
         switch self {
-        case let .view(_, alignmentBounds, _):
-            alignmentBounds.height
+        case let .view(alignable, _):
+            alignable.alignmentContext.alignmentBounds.height
         case let .fixed(length):
             length
         case let .flexible(weight):
@@ -52,8 +51,7 @@ extension Alignable {
     public func withHorizontalAlignment(_ orthogonalAlignment: HorizontalDistributionAlignment) -> VerticalDistributionItem {
         let alignmentContext = alignmentContext
         return .view(
-            alignmentContext.view,
-            alignmentBounds: alignmentContext.alignmentBounds,
+            self,
             orthogonalAlignment: orthogonalAlignment,
         )
     }
