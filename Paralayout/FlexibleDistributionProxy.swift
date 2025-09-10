@@ -17,7 +17,7 @@
 import UIKit
 
 @MainActor
-public final class FlexibleDistributionProxy: ViewDistributionSpecifying {
+public final class FlexibleDistributionProxy: VerticallyDistributable {
 
     // MARK: Initialization
 
@@ -41,9 +41,9 @@ public final class FlexibleDistributionProxy: ViewDistributionSpecifying {
     /// - Warning: The value of this property is undefined until a distribution containing the proxy has been performed.
     public internal(set) var rect: CGRect = .null
 
-    // MARK: ViewDistributionSpecifying
+    // MARK: VerticallyDistributable
 
-    public var distributionItem: ViewDistributionItem {
+    public var verticalDistributionItem: VerticalDistributionItem {
         .flexibleProxy(self)
     }
 
