@@ -120,7 +120,7 @@ extension UIView {
     /// - parameter orthogonalAlignment: The horizontal alignment to apply to the views. If `nil`, views are left in
     /// their horizontal position prior to the distribution. Defaults to centered with no offset.
     public func applyVerticalSubviewDistribution(
-        _ distribution: [ViewDistributionSpecifying],
+        _ distribution: [ViewDistributionItem],
         inRect layoutBounds: CGRect? = nil,
         orthogonalAlignment: HorizontalDistributionAlignment? = .centered(offset: 0)
     ) {
@@ -242,7 +242,7 @@ extension UIView {
     public func applyVerticalSubviewDistribution(
         inRect layoutBounds: CGRect? = nil,
         orthogonalAlignment: HorizontalDistributionAlignment? = .centered(offset: 0),
-        @ViewDistributionBuilder _ distribution: () -> [ViewDistributionSpecifying]
+        @ViewDistributionBuilder _ distribution: () -> [ViewDistributionItem]
     ) {
         applyVerticalSubviewDistribution(
             distribution(),
@@ -308,7 +308,7 @@ extension UIView {
     /// - parameter orthogonalAlignment: The vertical alignment to apply to the views. If `nil`, views are left in
     /// their vertical position prior to the distribution. Defaults to centered with no offset.
     public func applyHorizontalSubviewDistribution(
-        _ distribution: [ViewDistributionSpecifying],
+        _ distribution: [ViewDistributionItem],
         inRect layoutBounds: CGRect? = nil,
         orthogonalAlignment: VerticalDistributionAlignment? = .centered(offset: 0)
     ) {
@@ -423,7 +423,7 @@ extension UIView {
     public func applyHorizontalSubviewDistribution(
         inRect layoutBounds: CGRect? = nil,
         orthogonalAlignment: VerticalDistributionAlignment? = .centered(offset: 0),
-        @ViewDistributionBuilder _ distribution: () -> [ViewDistributionSpecifying]
+        @ViewDistributionBuilder _ distribution: () -> [ViewDistributionItem]
     ) {
         applyHorizontalSubviewDistribution(
             distribution(),
@@ -436,7 +436,7 @@ extension UIView {
     // MARK: - Private Methods
 
     private func applySubviewDistribution(
-        _ distribution: [ViewDistributionSpecifying],
+        _ distribution: [ViewDistributionItem],
         axis: ViewDistributionAxis,
         inRect layoutBounds: CGRect?,
         applyOrthogonalAlignment: (_ subviewFrame: inout CGRect, _ layoutBounds: CGRect) -> Void
