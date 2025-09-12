@@ -165,26 +165,6 @@ public enum ViewDistributionItem: Sendable {
 
 // MARK: -
 
-/// A means of getting a `ViewDistributionItem`.
-@MainActor
-public protocol ViewDistributionSpecifying {
-
-    var distributionItem: ViewDistributionItem { get }
-
-}
-
-extension UIView: ViewDistributionSpecifying {
-
-    // Adopt `ViewDistributionSpecifying`, making it possible to include UIView instances directly in distributions
-    // passed to `apply{Vertical,Horizontal}SubviewDistribution()`.
-    public var distributionItem: ViewDistributionItem {
-        return .view(self)
-    }
-
-}
-
-// MARK: -
-
 extension CGFloat {
 
     /// Use the value as a fixed spacer in a distribution.
@@ -229,7 +209,7 @@ extension Int {
 
 // MARK: -
 
-extension Array where Element: ViewDistributionSpecifying {
+extension Array where Element: Alignable {
     /// Return a distribution where the `interspersedItem` is inserted between each of the items in the receiver.
     ///
     /// For example, interspersing `16.fixed` into a distribution of
@@ -244,9 +224,9 @@ extension Array where Element: ViewDistributionSpecifying {
     public func interspersed(with interspersedItem: ViewDistributionItem) -> [ViewDistributionItem] {
         reduce([]) { partial, next in
             if partial.isEmpty {
-                [next.distributionItem]
+                [.view(next)]
             } else {
-                partial + [interspersedItem, next.distributionItem]
+                partial + [interspersedItem, .view(next)]
             }
         }
     }
