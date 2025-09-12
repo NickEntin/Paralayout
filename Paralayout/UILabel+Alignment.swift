@@ -72,6 +72,19 @@ public struct TextRectLayoutProxy: Alignable {
         )
     }
 
+    public func distributionSizeThatFits(_ size: CGSize) -> CGSize {
+        let textRectThatFits = proxiedLabel.textRect(
+            forBounds: CGRect(origin: .zero, size: proxiedLabel.sizeThatFits(size)),
+            limitedToNumberOfLines: numberOfLines ?? proxiedLabel.numberOfLines
+        )
+
+        if insetByCapInsets {
+            return proxiedLabel.font.labelCapInsets(in: proxiedLabel).inset(rect: textRectThatFits).size
+        } else {
+            return textRectThatFits.size
+        }
+    }
+
 }
 
 extension UILabel {
