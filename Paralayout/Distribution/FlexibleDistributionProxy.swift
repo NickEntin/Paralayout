@@ -17,32 +17,28 @@
 import UIKit
 
 @MainActor
-public final class FixedDistributionProxy: ViewDistributionSpecifying {
+public final class FlexibleDistributionProxy {
 
     // MARK: Initialization
 
-    /// Creates a fixed distribution proxy of the specified length.
+    /// Creates a flexible distribution proxy of the specified weight.
     ///
-    /// When applying a distribution, this distribution proxy will be assigned a rect with the specified `length` along the axis of distribution.
-    public init(length: CGFloat) {
-        self.length = length
+    /// When applying a distribution, this weight, along with the weights of any other flexible distribution proxies
+    /// and flexible spacers, is used to apportion the remaining space not taken up by fixed-size distribution items.
+    public init(weight: CGFloat) {
+        self.weight = weight
     }
 
     // MARK: Public
 
-    /// The length along the axis of distribution this distribution proxy should be apportioned.
-    public let length: CGFloat
+    /// The weight of the proxy in the distribution. This determines how much space the proxy is allocated, after
+    /// summing the weight of all flexible items (spacers and proxies) in the distribution.
+    public let weight: CGFloat
 
     /// The resulting rect allocated to the proxy after distribution, in the coordinate space of the view in which the
     /// distribution was performed.
     ///
     /// - Warning: The value of this property is undefined until a distribution containing the proxy has been performed.
     public internal(set) var rect: CGRect = .null
-
-    // MARK: ViewDistributionSpecifying
-
-    public var distributionItem: ViewDistributionItem {
-        .fixedProxy(self)
-    }
 
 }

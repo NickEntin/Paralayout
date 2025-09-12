@@ -18,7 +18,8 @@
 import UIKit
 
 /// An element of a horizontal or vertical distribution.
-public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
+@MainActor
+public enum ViewDistributionItem: Sendable {
 
     /// A UIView, with adjustments to how much space it should take up.
     case view(Alignable)
@@ -39,10 +40,6 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
     case fixedProxy(FixedDistributionProxy)
 
     // MARK: - Public Properties
-
-    public var distributionItem: ViewDistributionItem {
-        return self
-    }
 
     /// Whether or not this item is flexible.
     public var isFlexible: Bool {
@@ -69,7 +66,7 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
     /// - returns: An array of `ViewDistributionItem`s suitable for layout and/or measurement, and tallies of all fixed
     /// and flexible space.
     internal static func items(
-        impliedIn distribution: [ViewDistributionSpecifying],
+        impliedIn distribution: [ViewDistributionItem],
         axis: ViewDistributionAxis,
         superview: UIView?
     ) -> (items: [ViewDistributionItem], totalFixedSpace: CGFloat, flexibleSpaceDenominator: CGFloat) {
@@ -82,8 +79,7 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
         var subviewsToDistribute = Set<UIView>()
 
         // Map the specifiers to items, tallying up space along the way.
-        for specifier in distribution {
-            let item = specifier.distributionItem
+        for item in distribution {
             let layoutSize = item.layoutSize(along: axis)
 
             switch item {
