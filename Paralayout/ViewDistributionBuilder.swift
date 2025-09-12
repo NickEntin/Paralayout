@@ -129,18 +129,7 @@ public struct ViewDistributionBuilder {
     // MARK: Private
 
     private static func distributionItem(from alignable: Alignable) -> ViewDistributionItem {
-        let context = alignable.alignmentContext
-        let view = context.view
-        let alignmentBounds = context.alignmentBounds
-        return ViewDistributionItem.view(
-            view,
-            .init(
-                top: alignmentBounds.minY - view.bounds.minY,
-                left: alignmentBounds.minX - view.bounds.minX,
-                bottom: view.bounds.maxY - alignmentBounds.maxY,
-                right: view.bounds.maxX - alignmentBounds.maxX,
-            ),
-        )
+        return ViewDistributionItem.view(alignable)
     }
 }
 #endif

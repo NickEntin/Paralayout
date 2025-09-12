@@ -21,7 +21,7 @@ import UIKit
 public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
 
     /// A UIView, with adjustments to how much space it should take up.
-    case view(UIView, UIEdgeInsets)
+    case view(Alignable)
 
     /// A constant spacer between two other elements.
     case fixed(CGFloat)
@@ -87,7 +87,9 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
             let layoutSize = item.layoutSize(along: axis)
 
             switch item {
-            case .view(let view, _):
+            case let .view(alignable):
+                let view = alignable.alignmentContext.view
+
                 // Validate the view.
                 guard superview == nil || view.superview === superview else {
                     fatalError("\(view) is not a subview of \(String(describing: superview))!")
@@ -141,8 +143,13 @@ public enum ViewDistributionItem: ViewDistributionSpecifying, Sendable {
     /// flexible items).
     internal func layoutSize(along axis: ViewDistributionAxis, multiplier: CGFloat = 1) -> CGFloat {
         switch self {
-        case let .view(view, insets):
-            axis.size(of: view.untransformedFrame) - axis.amount(of: insets)
+        case let .view(alignable):
+            switch axis {
+            case .horizontal:
+                alignable.alignmentContext.alignmentBounds.width
+            case .vertical:
+                alignable.alignmentContext.alignmentBounds.height
+            }
 
         case let .fixed(margin):
             margin
@@ -175,7 +182,7 @@ extension UIView: ViewDistributionSpecifying {
     // Adopt `ViewDistributionSpecifying`, making it possible to include UIView instances directly in distributions
     // passed to `apply{Vertical,Horizontal}SubviewDistribution()`.
     public var distributionItem: ViewDistributionItem {
-        return .view(self, .zero)
+        return .view(self)
     }
 
 }

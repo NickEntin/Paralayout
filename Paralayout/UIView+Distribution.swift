@@ -461,25 +461,24 @@ extension UIView {
         var leadingEdgePosition = axis.leadingEdge(of: layoutBounds, layoutDirection: receiverLayoutDirection)
         for item in items {
             switch item {
-            case .view(let subview, let insets):
-                var frame = subview.untransformedFrame
+            case let .view(alignable):
+                var frame = alignable.alignmentContext.alignmentBounds
 
                 switch (axis, receiverLayoutDirection) {
                 case (.horizontal, .leftToRight):
-                    frame.origin.x = (leadingEdgePosition - insets.left).roundedToPixel(in: self)
+                    frame.origin.x = leadingEdgePosition.roundedToPixel(in: self)
                 case (.horizontal, .rightToLeft):
-                    frame.origin.x = (leadingEdgePosition + insets.right - frame.width).roundedToPixel(in: self)
+                    frame.origin.x = (leadingEdgePosition - frame.width).roundedToPixel(in: self)
                 case (.vertical, _):
-                    frame.origin.y = (leadingEdgePosition - insets.top).roundedToPixel(in: self)
+                    frame.origin.y = leadingEdgePosition.roundedToPixel(in: self)
                 @unknown default:
                     fatalError("Unknown user interface layout direction")
                 }
 
-                frame = frame.inset(by: insets)
                 applyOrthogonalAlignment(&frame, layoutBounds)
-                frame = frame.outset(by: insets)
 
-                subview.untransformedFrame = frame
+                // @NICK TODO: Probably need to specify alignment behavior here
+                alignable.align(.topLeft, withSuperviewPoint: frame.origin)
 
             case let .flexibleProxy(proxy):
                 let size = switch axis {
