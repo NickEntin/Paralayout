@@ -52,89 +52,6 @@ extension UIView {
     /// **Examples:**
     ///
     /// To stack two elements with a 10 pt margin between them:
-    /// ```
-    /// // This is effectively the same as [ 1.flexible, icon, 10.fixed, label, 1.flexible ].
-    /// applyVerticalSubviewDistribution([ icon, 10.fixed, label ])
-    /// ```
-    ///
-    /// To evenly spread out items:
-    /// ```
-    /// applyVerticalSubviewDistribution([ 1.flexible, button1, 1.flexible, button2, 1.flexible, button3, 1.flexible ])
-    /// ```
-    ///
-    /// To stack two elements with 50% more space below than above:
-    /// ```
-    /// applyVerticalSubviewDistribution([ 2.flexible, label, 12.fixed, textField, 3.flexible ])
-    /// ```
-    ///
-    /// To arrange a pair of label on the top and bottom edges of a view, with another label centered between them:
-    /// ```
-    /// applyVerticalSubviewDistribution(
-    ///     [ 8.fixed, headerLabel, 1.flexible, bodyLabel, 1.flexible, footerLabel, 8.fixed ]
-    /// )
-    /// ```
-    ///
-    /// To arrange UI in a view with an interior margin:
-    /// ```
-    /// applyVerticalSubviewDistribution([ icon, 10.fixed, label ], inRect: bounds.insetBy(dx: 20, dy: 40))
-    /// ```
-    ///
-    /// To arrange UI vertically aligned by their leading edge 10 pt in from the leading edge of their superview:
-    /// ```
-    /// applyVerticalSubviewDistribution([ icon, 1.flexible, button ], orthogonalOffset: .leading(inset: 10))
-    /// ```
-    ///
-    /// To arrange UI vertically without simultaneously centering it horizontally (the `icon` would need independent
-    /// horizontal positioning):
-    /// ```
-    /// applyVerticalSubviewDistribution([ 1.flexible, icon, 2.flexible ], orthogonalOffset: nil)
-    /// ```
-    ///
-    /// - precondition: All views in the `distribution` must be subviews of the receiver.
-    /// - precondition: The `distribution` must not include any given view more than once.
-    ///
-    /// - parameter distribution: An array of distribution specifiers, ordered from the top edge to the bottom edge.
-    /// - parameter layoutBounds: The region in the receiver in which to distribute the view in the receiver's
-    /// coordinate space. Specify `nil` to use the receiver's bounds. Defaults to `nil`.
-    /// - parameter orthogonalAlignment: The horizontal alignment to apply to the views. If `nil`, views are left in
-    /// their horizontal position prior to the distribution. Defaults to centered with no offset.
-    public func applyVerticalSubviewDistribution(
-        _ distribution: VerticalDistribution,
-        inRect layoutBounds: CGRect? = nil,
-        orthogonalAlignment: HorizontalDistributionAlignment? = .centered(offset: 0)
-    ) {
-        applySubviewDistribution(distribution, inRect: layoutBounds) { frame, layoutBounds in
-            guard let horizontalAlignment = orthogonalAlignment else {
-                return
-            }
-
-            switch (horizontalAlignment, effectiveUserInterfaceLayoutDirection) {
-            case let (.leading(inset: inset), .leftToRight):
-                frame.origin.x = (layoutBounds.minX + inset).roundedToPixel(in: self)
-            case let (.leading(inset: inset), .rightToLeft):
-                frame.origin.x = (layoutBounds.maxX - (frame.width + inset)).roundedToPixel(in: self)
-            case let (.centered(offset: offset), .leftToRight):
-                frame.origin.x = (layoutBounds.midX - frame.width / 2 + offset).roundedToPixel(in: self)
-            case let (.centered(offset: offset), .rightToLeft):
-                frame.origin.x = (layoutBounds.midX - frame.width / 2 - offset).roundedToPixel(in: self)
-            case let (.trailing(inset: inset), .leftToRight):
-                frame.origin.x = (layoutBounds.maxX - (frame.width + inset)).roundedToPixel(in: self)
-            case let (.trailing(inset: inset), .rightToLeft):
-                frame.origin.x = (layoutBounds.minX + inset).roundedToPixel(in: self)
-            @unknown default:
-                fatalError("Unknown user interface layout direction")
-            }
-        }
-    }
-
-    /// Arranges subviews along the vertical axis according to a distribution with fixed and/or flexible spacers.
-    ///
-    /// If there are no flexible elements, this will treat the distribution as vertically centered (i.e. with two
-    /// flexible elements of equal weight at the top and bottom, respectively).
-    ///
-    /// **Examples:**
-    ///
-    /// To stack two elements with a 10 pt margin between them:
     /// ```swift
     /// // This is effectively the same as [ 1.flexible, icon, 10.fixed, label, 1.flexible ].
     /// applyVerticalSubviewDistribution {
@@ -229,16 +146,67 @@ extension UIView {
         )
     }
 
-    // MARK: - Private
-
-    private func applySubviewDistribution(
-        _ distribution: [VerticalDistributionItem],
-        inRect layoutBounds: CGRect?,
-        applyOrthogonalAlignment: (_ subviewFrame: inout CGRect, _ layoutBounds: CGRect) -> Void
+    /// Arranges subviews along the vertical axis according to a distribution with fixed and/or flexible spacers.
+    ///
+    /// If there are no flexible elements, this will treat the distribution as vertically centered (i.e. with two
+    /// flexible elements of equal weight at the top and bottom, respectively).
+    ///
+    /// **Examples:**
+    ///
+    /// To stack two elements with a 10 pt margin between them:
+    /// ```
+    /// // This is effectively the same as [ 1.flexible, icon, 10.fixed, label, 1.flexible ].
+    /// applyVerticalSubviewDistribution([ icon, 10.fixed, label ])
+    /// ```
+    ///
+    /// To evenly spread out items:
+    /// ```
+    /// applyVerticalSubviewDistribution([ 1.flexible, button1, 1.flexible, button2, 1.flexible, button3, 1.flexible ])
+    /// ```
+    ///
+    /// To stack two elements with 50% more space below than above:
+    /// ```
+    /// applyVerticalSubviewDistribution([ 2.flexible, label, 12.fixed, textField, 3.flexible ])
+    /// ```
+    ///
+    /// To arrange a pair of label on the top and bottom edges of a view, with another label centered between them:
+    /// ```
+    /// applyVerticalSubviewDistribution(
+    ///     [ 8.fixed, headerLabel, 1.flexible, bodyLabel, 1.flexible, footerLabel, 8.fixed ]
+    /// )
+    /// ```
+    ///
+    /// To arrange UI in a view with an interior margin:
+    /// ```
+    /// applyVerticalSubviewDistribution([ icon, 10.fixed, label ], inRect: bounds.insetBy(dx: 20, dy: 40))
+    /// ```
+    ///
+    /// To arrange UI vertically aligned by their leading edge 10 pt in from the leading edge of their superview:
+    /// ```
+    /// applyVerticalSubviewDistribution([ icon, 1.flexible, button ], orthogonalOffset: .leading(inset: 10))
+    /// ```
+    ///
+    /// To arrange UI vertically without simultaneously centering it horizontally (the `icon` would need independent
+    /// horizontal positioning):
+    /// ```
+    /// applyVerticalSubviewDistribution([ 1.flexible, icon, 2.flexible ], orthogonalOffset: nil)
+    /// ```
+    ///
+    /// - precondition: All views in the `distribution` must be subviews of the receiver.
+    /// - precondition: The `distribution` must not include any given view more than once.
+    ///
+    /// - parameter distribution: An array of distribution specifiers, ordered from the top edge to the bottom edge.
+    /// - parameter layoutBounds: The region in the receiver in which to distribute the view in the receiver's
+    /// coordinate space. Specify `nil` to use the receiver's bounds. Defaults to `nil`.
+    /// - parameter orthogonalAlignment: The horizontal alignment to apply to the views. If `nil`, views are left in
+    /// their horizontal position prior to the distribution. Defaults to centered with no offset.
+    public func applyVerticalSubviewDistribution(
+        _ distribution: VerticalDistribution,
+        inRect layoutBounds: CGRect? = nil,
+        orthogonalAlignment: HorizontalDistributionAlignment? = .centered(offset: 0)
     ) {
         let axis = ViewDistributionAxis.vertical
 
-        // Process and validate the distribution.
         let (items, totalFixedSpace, flexibleSpaceDenominator) = VerticalDistributionItem.items(
             impliedIn: distribution,
             superview: self
@@ -251,48 +219,50 @@ extension UIView {
         // Determine the layout parameters based on the space the distribution is going into.
         let layoutBounds = layoutBounds ?? bounds
         let flexibleSpaceMultiplier = (axis.size(of: layoutBounds) - totalFixedSpace) / flexibleSpaceDenominator
-        let receiverLayoutDirection = effectiveUserInterfaceLayoutDirection
 
-        // Okay, ready to go!
-        var leadingEdgePosition = axis.leadingEdge(of: layoutBounds, layoutDirection: receiverLayoutDirection)
+        var leadingEdgePosition = axis.leadingEdge(of: layoutBounds, layoutDirection: effectiveUserInterfaceLayoutDirection)
         for item in items {
             switch item {
-            case let .view(alignable, _):
+            case let .view(alignable, itemOrthogonalAlignment):
                 var frame = alignable.alignmentContext.alignmentBounds
                 frame.origin.y = leadingEdgePosition.roundedToPixel(in: self)
-                applyOrthogonalAlignment(&frame, layoutBounds)
+
+                if let horizontalAlignment = itemOrthogonalAlignment ?? orthogonalAlignment {
+                    switch (horizontalAlignment, effectiveUserInterfaceLayoutDirection) {
+                    case let (.leading(inset: inset), .leftToRight):
+                        frame.origin.x = (layoutBounds.minX + inset).roundedToPixel(in: self)
+                    case let (.leading(inset: inset), .rightToLeft):
+                        frame.origin.x = (layoutBounds.maxX - (frame.width + inset)).roundedToPixel(in: self)
+                    case let (.centered(offset: offset), .leftToRight):
+                        frame.origin.x = (layoutBounds.midX - frame.width / 2 + offset).roundedToPixel(in: self)
+                    case let (.centered(offset: offset), .rightToLeft):
+                        frame.origin.x = (layoutBounds.midX - frame.width / 2 - offset).roundedToPixel(in: self)
+                    case let (.trailing(inset: inset), .leftToRight):
+                        frame.origin.x = (layoutBounds.maxX - (frame.width + inset)).roundedToPixel(in: self)
+                    case let (.trailing(inset: inset), .rightToLeft):
+                        frame.origin.x = (layoutBounds.minX + inset).roundedToPixel(in: self)
+                    @unknown default:
+                        fatalError("Unknown user interface layout direction")
+                    }
+                }
 
                 // @NICK TODO: Probably need to specify alignment behavior here
                 alignable.align(.topLeft, withSuperviewPoint: frame.origin)
 
             case let .flexibleProxy(proxy):
-                let size = switch axis {
-                case .horizontal:
-                    CGSize(width: flexibleSpaceMultiplier * proxy.weight, height: layoutBounds.height)
-                case .vertical:
-                    CGSize(width: layoutBounds.width, height: flexibleSpaceMultiplier * proxy.weight)
-                }
-
                 proxy.rect = CGRect(
                     x: layoutBounds.minX,
                     y: leadingEdgePosition,
-                    width: size.width,
-                    height: size.height
+                    width: layoutBounds.width,
+                    height: flexibleSpaceMultiplier * proxy.weight
                 )
 
             case let .fixedProxy(proxy):
-                let size = switch axis {
-                case .horizontal:
-                    CGSize(width: proxy.length, height: layoutBounds.height)
-                case .vertical:
-                    CGSize(width: layoutBounds.width, height: proxy.length)
-                }
-
                 proxy.rect = CGRect(
                     x: layoutBounds.minX,
                     y: leadingEdgePosition,
-                    width: size.width,
-                    height: size.height
+                    width: layoutBounds.width,
+                    height: proxy.length
                 )
 
             case .fixed, .flexible:
@@ -300,7 +270,7 @@ extension UIView {
             }
 
             // Note that we don't apply pixel rounding here, but rather when setting the position of each subview
-            // individually, so that rounding error is not accumulated.
+            // individually, so rounding error is not accumulated.
             leadingEdgePosition += item.layoutSize(multiplier: flexibleSpaceMultiplier)
         }
     }
