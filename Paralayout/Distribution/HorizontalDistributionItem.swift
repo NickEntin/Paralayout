@@ -17,9 +17,19 @@
 
 import UIKit
 
-/// An element of a horizontal or vertical distribution.
+public typealias HorizontalDistribution = [HorizontalDistributionItem]
+
+extension HorizontalDistribution {
+    public init(@HorizontalDistributionBuilder _ distribution: () -> HorizontalDistribution) {
+        self = distribution()
+    }
+}
+
+// MARK: -
+
+/// An element of a horizontal distribution.
 @MainActor
-public enum ViewDistributionItem: Sendable {
+public enum HorizontalDistributionItem: Sendable {
 
     /// A UIView, with adjustments to how much space it should take up.
     case view(Alignable)
@@ -66,11 +76,10 @@ public enum ViewDistributionItem: Sendable {
     /// - returns: An array of `ViewDistributionItem`s suitable for layout and/or measurement, and tallies of all fixed
     /// and flexible space.
     internal static func items(
-        impliedIn distribution: [ViewDistributionItem],
-        axis: ViewDistributionAxis,
+        impliedIn distribution: [HorizontalDistributionItem],
         superview: UIView?
-    ) -> (items: [ViewDistributionItem], totalFixedSpace: CGFloat, flexibleSpaceDenominator: CGFloat) {
-        var distributionItems = [ViewDistributionItem]()
+    ) -> (items: [HorizontalDistributionItem], totalFixedSpace: CGFloat, flexibleSpaceDenominator: CGFloat) {
+        var distributionItems = [HorizontalDistributionItem]()
         var totalViewSize: CGFloat = 0
         var totalFixedSpace: CGFloat = 0
         var totalFlexibleSpace: CGFloat = 0
@@ -80,7 +89,7 @@ public enum ViewDistributionItem: Sendable {
 
         // Map the specifiers to items, tallying up space along the way.
         for item in distribution {
-            let layoutSize = item.layoutSize(along: axis)
+            let layoutSize = item.layoutSize()
 
             switch item {
             case let .view(alignable):
@@ -125,8 +134,8 @@ public enum ViewDistributionItem: Sendable {
         // Insert flexible space if necessary.
         if totalFlexibleSpace == 0 {
             // Only fixed spacers: add `1.flexible` on both ends.
-            distributionItems.insert(1.flexible, at: 0)
-            distributionItems.append(1.flexible)
+            distributionItems.insert(.flexible(1), at: 0)
+            distributionItems.append(.flexible(1))
             totalFlexibleSpace += 2
         }
 
@@ -135,17 +144,11 @@ public enum ViewDistributionItem: Sendable {
 
     // MARK: - Internal Methods
 
-    /// Returns the length of the distribution item (`axis` and `multiplier` are relevant only for `.view` and
-    /// flexible items).
-    internal func layoutSize(along axis: ViewDistributionAxis, multiplier: CGFloat = 1) -> CGFloat {
+    /// Returns the length of the distribution item along the horizontal axis, applying the `multiplier` to the weight of flexible spacers and proxies.
+    internal func layoutSize(multiplier: CGFloat = 1) -> CGFloat {
         switch self {
         case let .view(alignable):
-            switch axis {
-            case .horizontal:
-                alignable.alignmentContext.alignmentBounds.width
-            case .vertical:
-                alignable.alignmentContext.alignmentBounds.height
-            }
+            alignable.alignmentContext.alignmentBounds.width
 
         case let .fixed(margin):
             margin
@@ -165,50 +168,6 @@ public enum ViewDistributionItem: Sendable {
 
 // MARK: -
 
-extension CGFloat {
-
-    /// Use the value as a fixed spacer in a distribution.
-    public var fixed: ViewDistributionItem {
-        return .fixed(self)
-    }
-
-    /// Use the value as a flexible (proportional) spacer in a distribution.
-    public var flexible: ViewDistributionItem {
-        return .flexible(self)
-    }
-
-}
-
-extension Double {
-
-    /// Use the value as a fixed spacer in a distribution.
-    public var fixed: ViewDistributionItem {
-        return .fixed(CGFloat(self))
-    }
-
-    /// Use the value as a flexible (proportional) spacer in a distribution.
-    public var flexible: ViewDistributionItem {
-        return .flexible(CGFloat(self))
-    }
-
-}
-
-extension Int {
-
-    /// Use the value as a fixed spacer in a distribution.
-    public var fixed: ViewDistributionItem {
-        return .fixed(CGFloat(self))
-    }
-
-    /// Use the value as a flexible (proportional) spacer in a distribution.
-    public var flexible: ViewDistributionItem {
-        return .flexible(CGFloat(self))
-    }
-
-}
-
-// MARK: -
-
 extension Array where Element: Alignable {
     /// Return a distribution where the `interspersedItem` is inserted between each of the items in the receiver.
     ///
@@ -221,12 +180,34 @@ extension Array where Element: Alignable {
     /// [view1, 16.fixed, view2, 16.fixed, view3]
     /// ```
     @MainActor
-    public func interspersed(with interspersedItem: ViewDistributionItem) -> [ViewDistributionItem] {
+    public func interspersed(with interspersedItem: HorizontalDistributionItem) -> [HorizontalDistributionItem] {
         reduce([]) { partial, next in
             if partial.isEmpty {
                 [.view(next)]
             } else {
                 partial + [interspersedItem, .view(next)]
+            }
+        }
+    }
+
+    @MainActor
+    public func interspersed(with interspersedItem: FixedSpacer) -> [HorizontalDistributionItem] {
+        reduce([]) { partial, next in
+            if partial.isEmpty {
+                [.view(next)]
+            } else {
+                partial + [.fixed(interspersedItem.length), .view(next)]
+            }
+        }
+    }
+
+    @MainActor
+    public func interspersed(with interspersedItem: FlexibleSpacer) -> [HorizontalDistributionItem] {
+        reduce([]) { partial, next in
+            if partial.isEmpty {
+                [.view(next)]
+            } else {
+                partial + [.flexible(interspersedItem.weight), .view(next)]
             }
         }
     }
