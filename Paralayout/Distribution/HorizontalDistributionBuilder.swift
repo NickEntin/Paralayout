@@ -99,6 +99,23 @@ public struct HorizontalDistributionBuilder {
         return component.compactMap { $0.map { .fixedProxy($0) } }
     }
 
+    @available(*, unavailable, message: "Cannot use item meant for vertical distribution in horizontal distribution")
+    public static func buildExpression(_ component: VerticalDistributionItem) -> [HorizontalDistributionItem] {
+        return []
+    }
+    @available(*, unavailable, message: "Cannot use item meant for vertical distribution in horizontal distribution")
+    public static func buildExpression(_ component: VerticalDistributionItem?) -> [HorizontalDistributionItem] {
+        return []
+    }
+    @available(*, unavailable, message: "Cannot use item meant for vertical distribution in horizontal distribution")
+    public static func buildExpression(_ component: [VerticalDistributionItem]) -> [HorizontalDistributionItem] {
+        return []
+    }
+    @available(*, unavailable, message: "Cannot use item meant for vertical distribution in horizontal distribution")
+    public static func buildExpression(_ component: [VerticalDistributionItem?]) -> [HorizontalDistributionItem] {
+        return []
+    }
+
     // Build partial results, which accumulate.
 
     public static func buildPartialBlock(first: HorizontalDistributionItem) -> [HorizontalDistributionItem] {
