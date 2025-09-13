@@ -16,7 +16,6 @@
 
 import UIKit
 
-#if swift(>=5.4)
 @resultBuilder @MainActor
 public struct HorizontalDistributionBuilder {
 
@@ -157,4 +156,3 @@ public struct HorizontalDistributionBuilder {
         return HorizontalDistributionItem.view(alignable)
     }
 }
-#endif

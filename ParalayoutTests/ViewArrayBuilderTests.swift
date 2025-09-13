@@ -17,7 +17,6 @@
 import Paralayout
 import XCTest
 
-#if swift(>=5.4)
 final class ViewArrayBuilderTests: XCTestCase {
 
     // MARK: - Tests
@@ -200,4 +199,3 @@ final class ViewArrayBuilderTests: XCTestCase {
         builder()
     }
 }
-#endif

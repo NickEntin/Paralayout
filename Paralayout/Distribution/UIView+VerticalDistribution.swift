@@ -127,7 +127,6 @@ extension UIView {
         }
     }
 
-#if swift(>=5.4)
     /// Arranges subviews along the vertical axis according to a distribution with fixed and/or flexible spacers.
     ///
     /// If there are no flexible elements, this will treat the distribution as vertically centered (i.e. with two
@@ -229,7 +228,6 @@ extension UIView {
             orthogonalAlignment: orthogonalAlignment
         )
     }
-#endif
 
     // MARK: - Private
 

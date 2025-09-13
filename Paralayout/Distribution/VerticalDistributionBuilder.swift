@@ -17,7 +17,6 @@
 
 import UIKit
 
-#if swift(>=5.4)
 @resultBuilder @MainActor
 public struct VerticalDistributionBuilder {
 
@@ -158,4 +157,3 @@ public struct VerticalDistributionBuilder {
         return VerticalDistributionItem.view(alignable)
     }
 }
-#endif

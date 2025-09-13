@@ -17,7 +17,6 @@
 import Paralayout
 import XCTest
 
-#if swift(>=5.4)
 final class ViewDistributionBuilderTests: XCTestCase {
 
     // MARK: - Tests
@@ -198,7 +197,6 @@ final class ViewDistributionBuilderTests: XCTestCase {
         builder()
     }
 }
-#endif
 
 extension ViewDistributionItem: Swift.Equatable { // TODO: `@retroactive Equatable` once we drop Xcode 15 support.
     nonisolated
