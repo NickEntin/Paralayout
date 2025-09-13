@@ -62,16 +62,16 @@ public struct VerticalDistributionBuilder {
     }
 
     public static func buildExpression(_ component: FixedSpacer) -> [VerticalDistributionItem] {
-        return [.fixed(component.length)]
+        return [.fixed(component.size.height)]
     }
     public static func buildExpression(_ component: FixedSpacer?) -> [VerticalDistributionItem] {
-        return [component].compactMap { $0.map{ .fixed($0.length) } }
+        return [component].compactMap { $0.map{ .fixed($0.size.height) } }
     }
     public static func buildExpression(_ component: [FixedSpacer]) -> [VerticalDistributionItem] {
-        return component.map { .fixed($0.length) }
+        return component.map { .fixed($0.size.height) }
     }
     public static func buildExpression(_ component: [FixedSpacer?]) -> [VerticalDistributionItem] {
-        return component.compactMap { $0.map { .fixed($0.length) } }
+        return component.compactMap { $0.map { .fixed($0.size.height) } }
     }
 
     public static func buildExpression(_ component: FlexibleDistributionProxy) -> [VerticalDistributionItem] {

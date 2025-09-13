@@ -196,7 +196,7 @@ extension Array where Element: Alignable {
             if partial.isEmpty {
                 [.view(next, orthogonalAlignment: nil)]
             } else {
-                partial + [.fixed(interspersedItem.length), .view(next, orthogonalAlignment: nil)]
+                partial + [.fixed(interspersedItem.size.height), .view(next, orthogonalAlignment: nil)]
             }
         }
     }

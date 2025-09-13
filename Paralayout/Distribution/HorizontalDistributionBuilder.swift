@@ -61,16 +61,16 @@ public struct HorizontalDistributionBuilder {
     }
 
     public static func buildExpression(_ component: FixedSpacer) -> [HorizontalDistributionItem] {
-        return [.fixed(component.length)]
+        return [.fixed(component.size.width)]
     }
     public static func buildExpression(_ component: FixedSpacer?) -> [HorizontalDistributionItem] {
-        return [component].compactMap { $0.map{ .fixed($0.length) } }
+        return [component].compactMap { $0.map{ .fixed($0.size.width) } }
     }
     public static func buildExpression(_ component: [FixedSpacer]) -> [HorizontalDistributionItem] {
-        return component.map { .fixed($0.length) }
+        return component.map { .fixed($0.size.width) }
     }
     public static func buildExpression(_ component: [FixedSpacer?]) -> [HorizontalDistributionItem] {
-        return component.compactMap { $0.map { .fixed($0.length) } }
+        return component.compactMap { $0.map { .fixed($0.size.width) } }
     }
 
     public static func buildExpression(_ component: FlexibleDistributionProxy) -> [HorizontalDistributionItem] {

@@ -20,12 +20,12 @@ public struct FixedSpacer {
     // MARK: Initialization
 
     public init(length: CGFloat) {
-        self.length = length
+        self.size = .init(width: length, height: length)
     }
 
     // MARK: Public
 
-    public let length: CGFloat // @NICK TODO: Should this be a CGSize
+    public let size: CGSize
 }
 
 // MARK: -
