@@ -246,8 +246,7 @@ extension UIView {
                     }
                 }
 
-                // @NICK TODO: Probably need to specify alignment behavior here
-                alignable.align(.topLeft, withSuperviewPoint: frame.origin)
+                alignable.align(.topLeft, withSuperviewPoint: frame.origin, alignmentBehavior: .untransformedFrame)
 
             case let .flexibleProxy(proxy):
                 proxy.rect = CGRect(

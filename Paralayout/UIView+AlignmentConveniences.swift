@@ -108,6 +108,7 @@ extension Alignable {
     public func align(
         _ position: Position,
         withSuperviewPoint superviewPoint: CGPoint,
+        alignmentBehavior: TargetAlignmentBehavior = .automatic,
         horizontalOffset: CGFloat = 0,
         verticalOffset: CGFloat = 0
     ) {
@@ -127,6 +128,7 @@ extension Alignable {
             resolvedPosition.layoutDirectionAgnosticPosition,
             with: superview,
             .topLeft,
+            alignmentBehavior: alignmentBehavior,
             offset: .init(horizontal: superviewPoint.x + horizontalOffset, vertical: superviewPoint.y + verticalOffset)
         )
     }
