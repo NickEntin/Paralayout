@@ -32,7 +32,7 @@ extension HorizontalDistribution {
 public enum HorizontalDistributionItem: Sendable {
 
     /// A UIView, with adjustments to how much space it should take up.
-    case view(Alignable)
+    case view(Alignable, orthogonalAlignment: VerticalDistributionAlignment?)
 
     /// A constant spacer between two other elements.
     case fixed(CGFloat)
@@ -92,7 +92,7 @@ public enum HorizontalDistributionItem: Sendable {
             let layoutSize = item.layoutSize()
 
             switch item {
-            case let .view(alignable):
+            case let .view(alignable, _):
                 let view = alignable.alignmentContext.view
 
                 // Validate the view.
@@ -147,7 +147,7 @@ public enum HorizontalDistributionItem: Sendable {
     /// Returns the length of the distribution item along the horizontal axis, applying the `multiplier` to the weight of flexible spacers and proxies.
     internal func layoutSize(multiplier: CGFloat = 1) -> CGFloat {
         switch self {
-        case let .view(alignable):
+        case let .view(alignable, _):
             alignable.alignmentContext.alignmentBounds.width
 
         case let .fixed(margin):
@@ -183,9 +183,9 @@ extension Array where Element: Alignable {
     public func interspersed(with interspersedItem: HorizontalDistributionItem) -> [HorizontalDistributionItem] {
         reduce([]) { partial, next in
             if partial.isEmpty {
-                [.view(next)]
+                [.view(next, orthogonalAlignment: nil)]
             } else {
-                partial + [interspersedItem, .view(next)]
+                partial + [interspersedItem, .view(next, orthogonalAlignment: nil)]
             }
         }
     }
@@ -194,9 +194,9 @@ extension Array where Element: Alignable {
     public func interspersed(with interspersedItem: FixedSpacer) -> [HorizontalDistributionItem] {
         reduce([]) { partial, next in
             if partial.isEmpty {
-                [.view(next)]
+                [.view(next, orthogonalAlignment: nil)]
             } else {
-                partial + [.fixed(interspersedItem.length), .view(next)]
+                partial + [.fixed(interspersedItem.length), .view(next, orthogonalAlignment: nil)]
             }
         }
     }
@@ -205,10 +205,24 @@ extension Array where Element: Alignable {
     public func interspersed(with interspersedItem: FlexibleSpacer) -> [HorizontalDistributionItem] {
         reduce([]) { partial, next in
             if partial.isEmpty {
-                [.view(next)]
+                [.view(next, orthogonalAlignment: nil)]
             } else {
-                partial + [.flexible(interspersedItem.weight), .view(next)]
+                partial + [.flexible(interspersedItem.weight), .view(next, orthogonalAlignment: nil)]
             }
         }
     }
+}
+
+// MARK: -
+
+extension Alignable {
+
+    @MainActor
+    public func withVerticalAlignment(_ orthogonalAlignment: VerticalDistributionAlignment) -> HorizontalDistributionItem {
+        return .view(
+            self,
+            orthogonalAlignment: orthogonalAlignment
+        )
+    }
+
 }

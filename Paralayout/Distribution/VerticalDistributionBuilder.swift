@@ -154,6 +154,6 @@ public struct VerticalDistributionBuilder {
     // MARK: Private
 
     private static func distributionItem(from alignable: Alignable) -> VerticalDistributionItem {
-        return VerticalDistributionItem.view(alignable)
+        return VerticalDistributionItem.view(alignable, orthogonalAlignment: nil)
     }
 }

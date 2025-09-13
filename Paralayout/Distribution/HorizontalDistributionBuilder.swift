@@ -153,6 +153,6 @@ public struct HorizontalDistributionBuilder {
     // MARK: Private
 
     private static func distributionItem(from alignable: Alignable) -> HorizontalDistributionItem {
-        return HorizontalDistributionItem.view(alignable)
+        return HorizontalDistributionItem.view(alignable, orthogonalAlignment: nil)
     }
 }

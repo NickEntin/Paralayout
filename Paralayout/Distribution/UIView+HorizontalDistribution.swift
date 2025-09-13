@@ -251,7 +251,7 @@ extension UIView {
         var leadingEdgePosition = axis.leadingEdge(of: layoutBounds, layoutDirection: receiverLayoutDirection)
         for item in items {
             switch item {
-            case let .view(alignable):
+            case let .view(alignable, _):
                 var frame = alignable.alignmentContext.alignmentBounds
 
                 switch (axis, receiverLayoutDirection) {
