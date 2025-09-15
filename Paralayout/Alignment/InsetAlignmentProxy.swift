@@ -35,7 +35,7 @@ public struct InsetAlignmentProxy: Alignable {
     public let alignable: Alignable
 
     public var proxiedView: UIView {
-        alignable.alignmentContext.view
+        return alignable.alignmentContext.view
     }
 
     public var insets: UIEdgeInsets
@@ -45,7 +45,7 @@ public struct InsetAlignmentProxy: Alignable {
     public var alignmentContext: AlignmentContext {
         return AlignmentContext(
             view: alignable.alignmentContext.view,
-            alignmentBounds: alignable.alignmentContext.alignmentBounds.inset(by: insets),
+            alignmentBounds: alignable.alignmentContext.alignmentBounds.inset(by: insets)
         )
     }
 
