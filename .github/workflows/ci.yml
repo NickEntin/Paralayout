@@ -7,12 +7,12 @@ on:
   pull_request:
 
 jobs:
-  xcode-build:
+  xcode-build-18:
     name: Xcode Build
     runs-on: macOS-15
     strategy:
       matrix:
-        platform: ['iOS_18', 'iPadOS_17']
+        platform: ['iOS_18']
       fail-fast: false
     steps:
       - name: Setup Ruby
@@ -22,7 +22,33 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Select Xcode Version
-        run: sudo xcode-select --switch /Applications/Xcode_16.2.app/Contents/Developer
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer
+      - name: Bundle Install
+        run: bundle install
+      - name: Build and Test
+        run: Scripts/build.swift xcode ${{ matrix.platform }} `which xcpretty`
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: Test Results
+          path: .build/derivedData/**/Logs/Test/*.xcresult
+  xcode-build-17:
+    name: Xcode Build
+    runs-on: macOS-14
+    strategy:
+      matrix:
+        platform: ['iPadOS_17']
+      fail-fast: false
+    steps:
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.5'
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Select Xcode Version
+        run: sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
       - name: Bundle Install
         run: bundle install
       - name: Build and Test
@@ -46,7 +72,7 @@ jobs:
       - name: Bundle Install
         run: bundle install
       - name: Select Xcode Version
-        run: sudo xcode-select --switch /Applications/Xcode_16.2.app/Contents/Developer
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer
       - name: Lint Podspec
         run: bundle exec pod lib lint --verbose --fail-fast --swift-version=6.0
   spm-5:
@@ -82,6 +108,6 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: Select Xcode Version
-        run: sudo xcode-select --switch /Applications/Xcode_16.2.app/Contents/Developer
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer
       - name: Build
         run: Scripts/build.swift spm ${{ matrix.platform }} `which xcpretty`

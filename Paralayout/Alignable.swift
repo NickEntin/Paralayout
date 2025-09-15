@@ -1,5 +1,6 @@
 //
-//  Copyright © 2021 Square, Inc.
+//  Portions of this file are Copyright © 2025 Nick Entin
+//  Portions of this file are Copyright © 2021 Square, Inc.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -21,6 +22,20 @@ import UIKit
 public protocol Alignable {
 
     var alignmentContext: AlignmentContext { get }
+
+    /// The size the object takes when laid out in a distribution.
+    func distributionSizeThatFits(_ size: CGSize) -> CGSize
+
+}
+
+extension Alignable {
+
+    public func distributionSizeThatFits(
+        width: CGFloat = .greatestFiniteMagnitude,
+        height: CGFloat = .greatestFiniteMagnitude
+    ) -> CGSize {
+        distributionSizeThatFits(.init(width: width, height: height))
+    }
 
 }
 
@@ -53,6 +68,10 @@ extension UIView: Alignable {
         return AlignmentContext(view: self, alignmentBounds: bounds)
     }
 
+    public func distributionSizeThatFits(_ size: CGSize) -> CGSize {
+        sizeThatFits(size)
+    }
+
 }
 
 // MARK: -
@@ -81,6 +100,12 @@ public struct InsetAlignmentProxy: Alignable {
             view: proxiedView,
             alignmentBounds: proxiedView.bounds.inset(by: insets)
         )
+    }
+
+    public func distributionSizeThatFits(_ size: CGSize) -> CGSize {
+        let sizeToFit = CGSize(width: size.width - insets.horizontalAmount, height: size.height - insets.verticalAmount)
+        let sizeThatFits = proxiedView.sizeThatFits(sizeToFit)
+        return CGSize(width: sizeThatFits.width + insets.horizontalAmount, height: sizeThatFits.height + insets.verticalAmount)
     }
 
 }
@@ -127,6 +152,10 @@ public struct RectAlignmentProxy: Alignable {
         )
     }
 
+    public func distributionSizeThatFits(_ size: CGSize) -> CGSize {
+        return rect.size
+    }
+
 }
 
 // MARK: -
@@ -166,6 +195,11 @@ public struct FrameAlignmentProxy: Alignable {
             view: proxiedView,
             alignmentBounds: frameInProxiedViewBounds
         )
+    }
+
+    public func distributionSizeThatFits(_ size: CGSize) -> CGSize {
+        let sizeToFit = CGRect(origin: .zero, size: size).applying(proxiedView.transform.inverted()).size
+        return proxiedView.sizeThatFits(sizeToFit).applying(proxiedView.transform)
     }
 
     // MARK: - Private Methods

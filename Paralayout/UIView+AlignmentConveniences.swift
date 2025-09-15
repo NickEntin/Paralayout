@@ -1,5 +1,6 @@
 //
-//  Copyright © 2021 Square, Inc.
+//  Portions of this file are Copyright © 2025 Nick Entin
+//  Portions of this file are Copyright © 2021 Square, Inc.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -108,6 +109,7 @@ extension Alignable {
     public func align(
         _ position: Position,
         withSuperviewPoint superviewPoint: CGPoint,
+        alignmentBehavior: TargetAlignmentBehavior = .automatic,
         horizontalOffset: CGFloat = 0,
         verticalOffset: CGFloat = 0
     ) {
@@ -127,6 +129,7 @@ extension Alignable {
             resolvedPosition.layoutDirectionAgnosticPosition,
             with: superview,
             .topLeft,
+            alignmentBehavior: alignmentBehavior,
             offset: .init(horizontal: superviewPoint.x + horizontalOffset, vertical: superviewPoint.y + verticalOffset)
         )
     }

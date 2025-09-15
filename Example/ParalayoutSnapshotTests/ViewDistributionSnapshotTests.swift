@@ -38,17 +38,15 @@ final class ViewDistributionSnapshotTests: SnapshotTestCase {
         thirdView.backgroundColor = .green
         containerView.addSubview(thirdView)
 
-        containerView.applyVerticalSubviewDistribution(
-            [
-                1.flexible,
-                firstView,
-                1.flexible,
-                secondView,
-                1.flexible,
-                thirdView,
-                1.flexible,
-            ]
-        )
+        containerView.applyVerticalSubviewDistribution {
+            1.flexible
+            firstView
+            1.flexible
+            secondView
+            1.flexible
+            thirdView
+            1.flexible
+        }
         assertSnapshot(matching: containerView, as: .image, named: nameForSnapshot(with: ["vertical"]))
     }
 
@@ -70,17 +68,15 @@ final class ViewDistributionSnapshotTests: SnapshotTestCase {
         thirdView.backgroundColor = .green
         containerView.addSubview(thirdView)
 
-        containerView.applyVerticalSubviewDistribution(
-            [
-                1.flexible,
-                firstView,
-                1.flexible,
-                secondView,
-                1.flexible,
-                thirdView,
-                1.flexible,
-            ]
-        )
+        containerView.applyVerticalSubviewDistribution {
+            1.flexible
+            firstView
+            1.flexible
+            secondView
+            1.flexible
+            thirdView
+            1.flexible
+        }
         assertSnapshot(matching: containerView, as: .image, named: nameForSnapshot(with: []))
     }
 
@@ -104,15 +100,13 @@ final class ViewDistributionSnapshotTests: SnapshotTestCase {
         label.sizeToFit()
         containerView.addSubview(label)
 
-        containerView.applyVerticalSubviewDistribution(
-            [
-                1.flexible,
-                topView,
-                label.distributionItemUsingCapInsets,
-                bottomView,
-                1.flexible,
-            ]
-        )
+        containerView.applyVerticalSubviewDistribution {
+            1.flexible
+            topView
+            label.capInsetsAlignmentProxy
+            bottomView
+            1.flexible
+        }
 
         assertSnapshot(matching: containerView, as: .image, named: nameForSnapshot(with: []))
     }
@@ -186,18 +180,17 @@ final class ViewDistributionSnapshotTests: SnapshotTestCase {
                 label3.sizeToFit()
 
                 applyHorizontalSubviewDistribution(
-                    [
-                        1.flexible,
-                        label1.distributionItemUsingCapInsets,
-                        1.flexible,
-                        label2.distributionItemUsingCapInsets,
-                        1.flexible,
-                        label3.distributionItemUsingCapInsets,
-                        1.flexible,
-                    ],
                     inRect: bounds.insetBy(bottom: 8),
                     orthogonalAlignment: .bottom(inset: 0)
-                )
+                ) {
+                    1.flexible
+                    label1.capInsetsAlignmentProxy
+                    1.flexible
+                    label2.capInsetsAlignmentProxy
+                    1.flexible
+                    label3.capInsetsAlignmentProxy
+                    1.flexible
+                }
 
                 referenceView.untransformedFrame = bounds.slice(from: .maxYEdge, amount: 8).slice
             }
@@ -209,6 +202,57 @@ final class ViewDistributionSnapshotTests: SnapshotTestCase {
             as: .image,
             named: nameForSnapshot(with: [])
         )
+    }
+
+    @MainActor
+    func testDistributionWithItemSpecificOrthogonalAlignments() {
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 400))
+        containerView.backgroundColor = .white
+
+        let firstView = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        firstView.backgroundColor = .blue.withAlphaComponent(0.5)
+        containerView.addSubview(firstView)
+
+        let secondView = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        secondView.backgroundColor = .blue.withAlphaComponent(0.5)
+        containerView.addSubview(secondView)
+
+        let thirdView = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        thirdView.backgroundColor = .blue.withAlphaComponent(0.5)
+        containerView.addSubview(thirdView)
+
+        let fourthView = UIView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        fourthView.backgroundColor = .blue.withAlphaComponent(0.5)
+        containerView.addSubview(fourthView)
+
+        containerView.applyVerticalSubviewDistribution(orthogonalAlignment: .centered()) {
+            1.flexible
+            firstView
+            16.fixed
+            secondView.withHorizontalAlignment(.leading(inset: 24))
+            16.fixed
+            thirdView.withHorizontalAlignment(.centered(offset: 16))
+            16.fixed
+            fourthView.withHorizontalAlignment(.trailing(inset: 8))
+            1.flexible
+        }
+
+        assertSnapshot(of: containerView, as: .image, named: nameForSnapshot(with: ["vertical"]))
+
+        containerView.untransformedFrame.size = CGSize(width: 400, height: 200)
+        containerView.applyHorizontalSubviewDistribution(orthogonalAlignment: .centered()) {
+            1.flexible
+            firstView
+            16.fixed
+            secondView.withVerticalAlignment(.top(inset: 24))
+            16.fixed
+            thirdView.withVerticalAlignment(.centered(offset: 16))
+            16.fixed
+            fourthView.withVerticalAlignment(.bottom(inset: 8))
+            1.flexible
+        }
+
+        assertSnapshot(of: containerView, as: .image, named: nameForSnapshot(with: ["horizontal"]))
     }
 
     @MainActor
@@ -404,17 +448,15 @@ final class HorizontalDistributionView: UIView {
     // MARK: - UIView
 
     override func layoutSubviews() {
-        applyHorizontalSubviewDistribution(
-            [
-                1.flexible,
-                firstView,
-                1.flexible,
-                secondView,
-                1.flexible,
-                thirdView,
-                1.flexible,
-            ]
-        )
+        applyHorizontalSubviewDistribution {
+            1.flexible
+            firstView
+            1.flexible
+            secondView
+            1.flexible
+            thirdView
+            1.flexible
+        }
     }
 
 }

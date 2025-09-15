@@ -70,7 +70,6 @@ extension UIView {
 
     // MARK: - Public Methods
 
-    #if swift(>=5.4)
     /// Sizes and positions subviews to equally take up all horizontal space.
     ///
     /// - precondition: The available space on the horizontal axis of the receiver's bounds must be at least as large as
@@ -97,7 +96,6 @@ extension UIView {
             orthogonalBehavior: orthogonalBehavior
         )
     }
-    #endif
 
     /// Sizes and positions subviews to equally take up all horizontal space.
     ///
@@ -145,7 +143,6 @@ extension UIView {
         }
     }
 
-    #if swift(>=5.4)
     /// Sizes and positions subviews to equally take up all vertical space.
     ///
     /// - precondition: The available space on the vertical axis of the receiver's bounds must be at least as large as
@@ -171,7 +168,6 @@ extension UIView {
             orthogonalBehavior: orthogonalBehavior
         )
     }
-    #endif
 
     /// Sizes and positions subviews to equally take up all vertical space.
     ///
