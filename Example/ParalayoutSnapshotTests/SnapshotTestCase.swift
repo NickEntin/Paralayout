@@ -47,8 +47,8 @@ class SnapshotTestCase: XCTestCase {
 
     private static let testedDevices = [
 
-        // iPhone 16 Pro - iOS 18.2
-        TestDeviceConfig(systemVersion: "18.2", screenSize: CGSize(width: 402, height: 874), screenScale: 3),
+        // iPhone 16 Pro - iOS 18.6
+        TestDeviceConfig(systemVersion: "18.6", screenSize: CGSize(width: 402, height: 874), screenScale: 3),
 
         // iPad (10th Generation) - iPadOS 17.5
         TestDeviceConfig(systemVersion: "17.5", screenSize: CGSize(width: 820, height: 1180), screenScale: 2),
