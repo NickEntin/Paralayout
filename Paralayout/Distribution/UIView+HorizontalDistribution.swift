@@ -133,7 +133,7 @@ extension UIView {
     /// coordinate space. Specify `nil` to use the receiver's bounds. Defaults to `nil`.
     /// - parameter orthogonalAlignment: The vertical alignment to apply to the views. If `nil`, views are left in
     /// their vertical position prior to the distribution. Defaults to centered with no offset.
-    /// - parameter distribution: An array of distribution specifiers, ordered from the leading edge to the trailing
+    /// - parameter distribution: An array of distribution items, ordered from the leading edge to the trailing
     /// edge.
     public func applyHorizontalSubviewDistribution(
         inRect layoutBounds: CGRect? = nil,
@@ -196,7 +196,7 @@ extension UIView {
     /// - precondition: All views in the `distribution` must be subviews of the receiver.
     /// - precondition: The `distribution` must not include any given view more than once.
     ///
-    /// - parameter distribution: An array of distribution specifiers, ordered from the leading edge to the trailing
+    /// - parameter distribution: An array of distribution items, ordered from the leading edge to the trailing
     /// edge.
     /// - parameter layoutBounds: The region in the receiver in which to distribute the view in the receiver's
     /// coordinate space. Specify `nil` to use the receiver's bounds. Defaults to `nil`.

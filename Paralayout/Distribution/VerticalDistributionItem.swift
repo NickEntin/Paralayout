@@ -63,7 +63,7 @@ public enum VerticalDistributionItem: Sendable {
 
     // MARK: - Internal Static Methods
 
-    /// Maps the specifiers to their provided items and adds implied flexible spacers as necessary.
+    /// Adds implied flexible spacers as necessary.
     ///
     /// * If no spacers (fixed or flexible) or flexible proxies are included, equal flexible spacers are inserted
     ///   between all views.
@@ -87,7 +87,6 @@ public enum VerticalDistributionItem: Sendable {
 
         var subviewsToDistribute = Set<UIView>()
 
-        // Map the specifiers to items, tallying up space along the way.
         for item in distribution {
             let layoutSize = item.layoutSize()
 
@@ -216,6 +215,7 @@ extension Array where Element: Alignable {
 
 extension Alignable {
 
+    /// Specifies the horizontal alignment to use for this item in a vertical distribution, overriding the orthogonal alignment specified for the distribution as a whole.
     @MainActor
     public func withHorizontalAlignment(_ orthogonalAlignment: HorizontalDistributionAlignment) -> VerticalDistributionItem {
         return .view(
