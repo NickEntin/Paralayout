@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  xcode-build:
+  xcode-build-18:
     name: Xcode Build
     runs-on: macOS-15
     strategy:
@@ -21,12 +21,34 @@ jobs:
           ruby-version: '3.3.5'
       - name: Checkout Repo
         uses: actions/checkout@v4
-      - name: Select Xcode Version (16.4)
+      - name: Select Xcode Version
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer
-        if: ${{ matrix.platform == 'iOS_18' }}
-      - name: Select Xcode Version (15.4)
+      - name: Bundle Install
+        run: bundle install
+      - name: Build and Test
+        run: Scripts/build.swift xcode ${{ matrix.platform }} `which xcpretty`
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: Test Results
+          path: .build/derivedData/**/Logs/Test/*.xcresult
+  xcode-build-17:
+    name: Xcode Build
+    runs-on: macOS-14
+    strategy:
+      matrix:
+        platform: ['iPadOS_17']
+      fail-fast: false
+    steps:
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3.5'
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Select Xcode Version
         run: sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
-        if: ${{ matrix.platform == 'iPadOS_17' }}
       - name: Bundle Install
         run: bundle install
       - name: Build and Test
