@@ -73,7 +73,7 @@ public enum VerticalDistributionItem: Sendable {
     /// - precondition: All views in the `distribution` must be subviews of the `superview`.
     /// - precondition: The `distribution` must not include any given view more than once.
     ///
-    /// - returns: An array of `ViewDistributionItem`s suitable for layout and/or measurement, and tallies of all fixed
+    /// - returns: An array of `VerticalDistributionItem`s suitable for layout and/or measurement, and tallies of all fixed
     /// and flexible space.
     internal static func items(
         impliedIn distribution: [VerticalDistributionItem],

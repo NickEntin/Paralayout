@@ -18,7 +18,7 @@
 import UIKit
 
 /// Orthogonal alignment options for vertical view distribution.
-public enum HorizontalDistributionAlignment {
+public enum HorizontalDistributionAlignment: Equatable {
 
     /// Align to the leading edge, inset by the specified amount.
     ///
