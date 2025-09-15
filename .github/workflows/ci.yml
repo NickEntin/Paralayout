@@ -21,8 +21,12 @@ jobs:
           ruby-version: '3.3.5'
       - name: Checkout Repo
         uses: actions/checkout@v4
-      - name: Select Xcode Version
+      - name: Select Xcode Version (16.4)
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app/Contents/Developer
+        if: ${{ matrix.platform == 'iOS_18' }}
+      - name: Select Xcode Version (15.4)
+        run: sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
+        if: ${{ matrix.platform == 'iPadOS_17' }}
       - name: Bundle Install
         run: bundle install
       - name: Build and Test
