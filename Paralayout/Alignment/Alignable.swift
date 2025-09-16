@@ -76,55 +76,6 @@ extension UIView: Alignable {
 
 // MARK: -
 
-/// An alignment proxy that supports a view participating in alignment using a rect inset from its `bounds` by the
-/// specified `insets`.
-public struct InsetAlignmentProxy: Alignable {
-
-    // MARK: - Life Cycle
-
-    public init(proxiedView: UIView, insets: UIEdgeInsets) {
-        self.proxiedView = proxiedView
-        self.insets = insets
-    }
-
-    // MARK: - Public Properties
-
-    public let proxiedView: UIView
-
-    public var insets: UIEdgeInsets
-
-    // MARK: - Alignable
-
-    public var alignmentContext: AlignmentContext {
-        return AlignmentContext(
-            view: proxiedView,
-            alignmentBounds: proxiedView.bounds.inset(by: insets)
-        )
-    }
-
-    public func distributionSizeThatFits(_ size: CGSize) -> CGSize {
-        let sizeToFit = CGSize(width: size.width - insets.horizontalAmount, height: size.height - insets.verticalAmount)
-        let sizeThatFits = proxiedView.sizeThatFits(sizeToFit)
-        return CGSize(width: sizeThatFits.width + insets.horizontalAmount, height: sizeThatFits.height + insets.verticalAmount)
-    }
-
-}
-
-extension UIView {
-
-    /// An alignment proxy that supports the view participating in alignment using the rect inset from its `bounds` by
-    /// its `layoutMargins`.
-    ///
-    /// - Note: The proxy provided by this property is based on the receiver's current `layoutMargins` and will not
-    /// automatically update if the value of `layoutMargins` changes.
-    public var layoutMarginsAlignmentProxy: Alignable {
-        return InsetAlignmentProxy(proxiedView: self, insets: layoutMargins)
-    }
-
-}
-
-// MARK: -
-
 /// An alignment proxy that supports aligning to an arbitrary rect defined in the coordinate space of the proxied view.
 public struct RectAlignmentProxy: Alignable {
 
