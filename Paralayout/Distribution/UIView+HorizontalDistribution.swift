@@ -249,7 +249,7 @@ extension UIView {
                     }
                 }
 
-                alignable.align(.topLeft, withSuperviewPoint: frame.origin, alignmentBehavior: .untransformedFrame)
+                alignable.align(.topLeft, withSuperviewPoint: frame.origin)
 
             case let .flexibleProxy(proxy):
                 let size = CGSize(width: flexibleSpaceMultiplier * proxy.weight, height: layoutBounds.height)
