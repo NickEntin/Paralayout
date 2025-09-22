@@ -167,6 +167,50 @@ public enum VerticalDistributionItem: Sendable {
 
 // MARK: -
 
+extension Array where Element == VerticalDistributionItem {
+    /// Return a distribution where the `interspersedItem` is inserted between each of the items in the receiver.
+    @MainActor
+    public func interspersed(with interspersedItem: VerticalDistributionItem) -> [VerticalDistributionItem] {
+        reduce([]) { partial, next in
+            if partial.isEmpty {
+                [next]
+            } else {
+                partial + [interspersedItem, next]
+            }
+        }
+    }
+
+    /// Return a distribution where the `interspersedItem` is inserted between each of the items in the receiver.
+    ///
+    /// For example, interspersing `16.fixed` into a distribution of
+    /// ```
+    /// [view1, view2, view3]
+    /// ```
+    /// gives a resulting distribution of
+    /// ```
+    /// [view1, 16.fixed, view2, 16.fixed, view3]
+    /// ```
+    @MainActor
+    public func interspersed(with interspersedItem: FixedSpacer) -> [VerticalDistributionItem] {
+        interspersed(with: .fixed(interspersedItem.size.height))
+    }
+
+    /// Return a distribution where the `interspersedItem` is inserted between each of the items in the receiver.
+    ///
+    /// For example, interspersing `1.flexible` into a distribution of
+    /// ```
+    /// [view1, view2, view3]
+    /// ```
+    /// gives a resulting distribution of
+    /// ```
+    /// [view1, 1.flexible, view2, 1.flexible, view3]
+    /// ```
+    @MainActor
+    public func interspersed(with interspersedItem: FlexibleSpacer) -> [VerticalDistributionItem] {
+        interspersed(with: .flexible(interspersedItem.weight))
+    }
+}
+
 extension Array where Element: Alignable {
     /// Return a distribution where the `interspersedItem` is inserted between each of the items in the receiver.
     @MainActor
