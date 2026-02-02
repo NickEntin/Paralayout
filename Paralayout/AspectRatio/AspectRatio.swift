@@ -76,7 +76,7 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
 
     /// Creates an AspectRatio matching a given `rect`.
     ///
-    /// - note: Passing a `size` with either a `width` or `height` less than or equal to zero will result in a null aspect ratio (represented by `.null`),
+    /// - note: Passing a `rect` with either a `width` or `height` less than or equal to zero will result in a null aspect ratio (represented by `.null`),
     /// which will return zero for all size calculations.
     public init(rect: CGRect) {
         self.init(width: rect.width, height: rect.height)
