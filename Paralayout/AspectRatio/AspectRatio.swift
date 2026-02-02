@@ -1,5 +1,6 @@
 //
-//  Copyright © 2017 Square, Inc.
+//  Portions of this file are Copyright © 2026 Nick Entin
+//  Portions of this file are Copyright © 2017 Square, Inc.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
 //  you may not use this file except in compliance with the License.
@@ -30,6 +31,13 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
     /// The aspect ratio of HD video, typical for device displays and video (16:9).
     public static let widescreen = AspectRatio(width: 16, height: 9)
 
+    /// A null aspect ratio represents the aspect ratio of empty content.
+    ///
+    /// There are a few important behavioral characteristics of null aspect ratios:
+    /// * Null aspect ratios will return **zero** for all size calculations.
+    /// * Null aspect ratios compare **less than** all non-null aspect ratios.
+    public static let null = AspectRatio(width: 0, height: 0)
+
     // MARK: - Private Properties
 
     private let ratioWidth: CGFloat
@@ -46,12 +54,13 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
 
     /// Creates an AspectRatio with a given `width` and `height`.
     ///
-    /// - precondition: Both the `width` and `height` must be greater than zero.
+    /// - note: Passing either a `width` or `height` less than or equal to zero will result in a null aspect ratio (represented by `.null`), which will return
+    /// zero for all size calculations.
     public init(width: CGFloat, height: CGFloat) {
-        precondition(
-            width > 0 && height > 0,
-            "AspectRatios must be created with a width and height both greater than zero"
-        )
+        guard width > 0, height > 0 else {
+            self = .null
+            return
+        }
 
         ratioWidth = width
         ratioHeight = height
@@ -59,14 +68,16 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
 
     /// Creates an AspectRatio matching a given `size`.
     ///
-    /// - precondition: Both the `width` and `height` of the `size` must be greater than zero.
+    /// - note: Passing a `size` with either a `width` or `height` less than or equal to zero will result in a null aspect ratio (represented by `.null`),
+    /// which will return zero for all size calculations.
     public init(size: CGSize) {
         self.init(width: size.width, height: size.height)
     }
 
     /// Creates an AspectRatio matching a given `rect`.
     ///
-    /// - precondition: Both the `width` and `height` of the `rect` must be greater than zero.
+    /// - note: Passing a `rect` with either a `width` or `height` less than or equal to zero will result in a null aspect ratio (represented by `.null`),
+    /// which will return zero for all size calculations.
     public init(rect: CGRect) {
         self.init(width: rect.width, height: rect.height)
     }
@@ -78,19 +89,47 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
     }
 
     public static func < (lhs: AspectRatio, rhs: AspectRatio) -> Bool {
-        (lhs.ratioWidth * rhs.ratioHeight < lhs.ratioHeight * rhs.ratioWidth)
+        switch (lhs.isNull, rhs.isNull) {
+        case (true, false):
+            true
+        case (false, true):
+            false
+        case (true, true), (false, false):
+            (lhs.ratioWidth * rhs.ratioHeight < lhs.ratioHeight * rhs.ratioWidth)
+        }
     }
 
     public static func <= (lhs: AspectRatio, rhs: AspectRatio) -> Bool {
-        (lhs.ratioWidth * rhs.ratioHeight <= lhs.ratioHeight * rhs.ratioWidth)
+        switch (lhs.isNull, rhs.isNull) {
+        case (true, false):
+            true
+        case (false, true):
+            false
+        case (true, true), (false, false):
+            (lhs.ratioWidth * rhs.ratioHeight <= lhs.ratioHeight * rhs.ratioWidth)
+        }
     }
 
     public static func >= (lhs: AspectRatio, rhs: AspectRatio) -> Bool {
-        (lhs.ratioWidth * rhs.ratioHeight >= lhs.ratioHeight * rhs.ratioWidth)
+        switch (lhs.isNull, rhs.isNull) {
+        case (true, false):
+            false
+        case (false, true):
+            true
+        case (true, true), (false, false):
+            (lhs.ratioWidth * rhs.ratioHeight >= lhs.ratioHeight * rhs.ratioWidth)
+        }
     }
 
     public static func > (lhs: AspectRatio, rhs: AspectRatio) -> Bool {
-        (lhs.ratioWidth * rhs.ratioHeight > lhs.ratioHeight * rhs.ratioWidth)
+        switch (lhs.isNull, rhs.isNull) {
+        case (true, false):
+            false
+        case (false, true):
+            true
+        case (true, true), (false, false):
+            (lhs.ratioWidth * rhs.ratioHeight > lhs.ratioHeight * rhs.ratioWidth)
+        }
     }
 
     // MARK: - DebugStringConvertible
@@ -115,7 +154,11 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
     /// - parameter width: The desired width.
     /// - parameter scale: The number of pixels per point.
     public func height(forWidth width: CGFloat, in scale: CGFloat) -> CGFloat {
-        (ratioHeight * width / ratioWidth).roundedToPixel(in: scale)
+        guard !isNull else {
+            return 0
+        }
+
+        return (ratioHeight * width / ratioWidth).roundedToPixel(in: scale)
     }
 
     /// Returns the width of the aspect ratio for a given `height` rounded to the nearest pixel.
@@ -132,7 +175,11 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
     /// - parameter height: The desired height.
     /// - parameter scale: The number of pixels per point.
     public func width(forHeight height: CGFloat, in scale: CGFloat) -> CGFloat {
-        (ratioWidth * height / ratioHeight).roundedToPixel(in: scale)
+        guard !isNull else {
+            return 0
+        }
+
+        return (ratioWidth * height / ratioHeight).roundedToPixel(in: scale)
     }
 
     /// Returns a size of the aspect ratio with the specified `width`. The size's `height` will be rounded to the
@@ -151,7 +198,11 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
     /// - parameter width: The desired width.
     /// - parameter scale: The number of pixels per point.
     public func size(forWidth width: CGFloat, in scale: CGFloat) -> CGSize {
-        CGSize(
+        guard !isNull else {
+            return .zero
+        }
+
+        return CGSize(
             width: width,
             height: height(forWidth: width, in: scale)
         )
@@ -173,7 +224,11 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
     /// - parameter height: The desired height.
     /// - parameter scale: The number of pixels per point.
     public func size(forHeight height: CGFloat, in scale: CGFloat) -> CGSize {
-        CGSize(
+        guard !isNull else {
+            return .zero
+        }
+
+        return CGSize(
             width: width(forHeight: height, in: scale),
             height: height
         )
@@ -197,16 +252,20 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
     /// - parameter scale: The number of pixels per point.
     /// - returns: A size with the receiver's aspect ratio, no larger than the bounding size.
     public func size(toFit size: CGSize, in scale: CGFloat) -> CGSize {
+        guard !isNull else {
+            return .zero
+        }
+
         if size.aspectRatio <= self {
             // Match width, narrow the height.
-            CGSize(
+            return CGSize(
                 width: size.width,
                 height: min(size.height, height(forWidth: size.width, in: scale))
             )
 
         } else {
             // Match height, narrow the width.
-            CGSize(
+            return CGSize(
                 width: min(size.width, width(forHeight: size.height, in: scale)),
                 height: size.height
             )
@@ -278,16 +337,20 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
     /// - parameter scale: The number of pixels per point.
     /// - returns: A size with the receiver's aspect ratio, at least as large as the bounding size.
     public func size(toFill size: CGSize, in scale: CGFloat) -> CGSize {
+        guard !isNull else {
+            return .zero
+        }
+
         if size.aspectRatio <= self {
             // Match height, expand the width.
-            CGSize(
+            return CGSize(
                 width: width(forHeight: size.height, in: scale),
                 height: size.height
             )
 
         } else {
             // Match width, expand the height.
-            CGSize(
+            return CGSize(
                 width: size.width,
                 height: height(forWidth: size.width, in: scale)
             )
@@ -339,6 +402,10 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
             in: scale,
             layoutDirection: layoutDirection
         )
+    }
+
+    public var isNull: Bool {
+        ratioWidth == 0 && ratioHeight == 0
     }
 
 }
