@@ -58,7 +58,8 @@ public struct AspectRatio: Comparable, CustomDebugStringConvertible, Sendable {
     /// zero for all size calculations.
     public init(width: CGFloat, height: CGFloat) {
         guard width > 0, height > 0 else {
-            self = .null
+            ratioWidth = 0
+            ratioHeight = 0
             return
         }
 
