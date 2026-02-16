@@ -16,6 +16,12 @@
 
 import CoreGraphics
 
+/// General representation of an angle.
+///
+/// Note: This type makes working with angles easier in a wide variety of use cases, but its also somewhat agnostic to how angles are measured since the semantics
+/// of angle measurements (e.g. where is zero, is positive clockwise or counterclockwise, etc.) differ by use case. For example, some common use cases include:
+///
+/// * **Transforms** - zero is no rotation, positive is in the <@NICK TODO> direction
 public struct Angle: Comparable, Sendable {
 
     // MARK: - Public Static Properties
@@ -45,6 +51,8 @@ public struct Angle: Comparable, Sendable {
     }
 
     /// Create an angle, measured as the angle between two points, in the range `(-180°,180°]`.
+    ///
+    /// @NICK TODO: Where is zero, and what direction
     public init(from startPoint: CGPoint, to endPoint: CGPoint) {
         self.radians = atan2(endPoint.y - startPoint.y, endPoint.x - startPoint.x)
     }
@@ -76,6 +84,7 @@ public struct Angle: Comparable, Sendable {
 
     // MARK: - Public Methods
 
+    /// @NICK TODO: Where is zero, and what direction
     public func point(atDistance distance: CGFloat, from origin: CGPoint) -> CGPoint {
         return CGPoint(
             x: origin.x + distance * cos(radians),
